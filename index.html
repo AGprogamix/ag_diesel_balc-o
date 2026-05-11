@@ -9,14 +9,15 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: #1a1a1d; margin: 0; color: #e0e0e0; }
         .container { max-width: 1200px; margin: auto; }
         
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #333; }
-        .tab-btn { background: #2b2b36; border: none; padding: 12px 25px; color: #aaa; cursor: pointer; border-radius: 8px 8px 0 0; font-weight: bold; transition: 0.3s; font-size: 13px; }
+        /* Ajuste no tabs para não quebrar no celular com a 4ª aba */
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #333; overflow-x: auto; white-space: nowrap; }
+        .tab-btn { background: #2b2b36; border: none; padding: 12px 20px; color: #aaa; cursor: pointer; border-radius: 8px 8px 0 0; font-weight: bold; transition: 0.3s; font-size: 13px; }
         .tab-btn.active { background: #cc0000; color: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         .panel { background: #2b2b36; padding: 25px; border-radius: 8px; border: 1px solid #3f3f4e; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .panel-flex { display: flex; gap: 20px; align-items: flex-start; }
+        .panel-flex { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
         .panel-col { flex: 1; min-width: 320px; }
 
         h2 { color: #ff4d4d; margin-top: 0; font-size: 1.4em; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; }
@@ -53,6 +54,10 @@
         .table-dark td { padding: 10px 12px; border-bottom: 1px solid #3f3f4e; color: #ddd; vertical-align: middle;}
 
         .badge-success { color: #4caf50; font-size: 11px; float: right; display: none; }
+        
+        /* Badges de Status do Orçamento */
+        .badge-warning { background: #ffcc00; color: #000; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .badge-ok { background: #4caf50; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
         /* ================= JANELA FLUTUANTE (MODAL DE PRÉ-VISUALIZAÇÃO) ================= */
         .modal-overlay {
@@ -71,7 +76,7 @@
         .btn-close-modal { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px;}
         .btn-close-modal:hover { background: #c82333; }
 
-        /* ================= ESTILO DO DOCUMENTO OS (TELA E IMPRESSÃO) ================= */
+        /* ================= ESTILO DO DOCUMENTO OS ================= */
         #documentoOS {
             background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px;
         }
@@ -131,15 +136,23 @@
         <button class="tab-btn active" onclick="openTab('aba-os')">NOVA ORDEM DE SERVIÇO</button>
         <button class="tab-btn" onclick="openTab('aba-historico')">HISTÓRICO VEICULAR</button>
         <button class="tab-btn" onclick="openTab('aba-financeiro')">DASHBOARD FINANCEIRO</button>
+        <button class="tab-btn" onclick="openTab('aba-faturamento-pecas')">📊 RELATÓRIO DE PEÇAS</button>
     </div>
 
-    <!-- ABA 1: NOVA OS -->
     <div id="aba-os" class="tab-content active">
         <div class="panel-flex">
             
             <div class="panel-col panel" style="max-width: 480px;">
                 <h2>AG Diesel - Módulo de OS</h2>
                 
+                <div class="input-group" style="background: #331414; border-color: #ff4d4d;">
+                    <h3 style="color: #ff4d4d;">Tipo de Documento</h3>
+                    <select id="tipoDocumento" style="border: 2px solid #ff4d4d; font-weight: bold; background: #1e1e24;">
+                        <option value="ORÇAMENTO">📄 APENAS ORÇAMENTO (NÃO CONTA NO LUCRO)</option>
+                        <option value="OS" selected>🛠️ ORDEM DE SERVIÇO (EFETIVAR VENDA)</option>
+                    </select>
+                </div>
+
                 <div class="input-group">
                     <h3>Veículo e Cliente <span id="avisoEncontrado" class="badge-success">✔ Carregado</span></h3>
                     <div class="row-inputs">
@@ -198,17 +211,16 @@
                     </div>
                 </div>
 
-                <button class="btn-gerar" onclick="gerarOS()">GERAR ORDEM DE SERVIÇO ➔</button>
+                <button class="btn-gerar" onclick="gerarOS()">GERAR DOCUMENTO ➔</button>
                 
                 <div id="acoesPosGeracao" style="display: none;">
                     <button class="btn-print" style="background: #007bff;" onclick="abrirPreview()">🔍 VER PRÉ-VISUALIZAÇÃO</button>
-                    <!-- NOVO BOTÃO DE LIMPEZA DE TELA -->
-                    <button class="btn-add" style="background: #6c757d; margin-top: 10px;" onclick="limparTelaOS()">🔄 LIMPAR TELA (NOVA OS)</button>
+                    <button class="btn-add" style="background: #6c757d; margin-top: 10px;" onclick="limparTelaOS()">🔄 LIMPAR TELA (NOVO ATENDIMENTO)</button>
                 </div>
             </div>
             
             <div class="panel-col panel" id="resumoFinanceiro" style="display:none; max-width: 350px;">
-                <h2 style="color: #4caf50;">Lucro da Venda</h2>
+                <h2 style="color: #4caf50;">Lucro da Venda (Real)</h2>
                 <div class="input-group">
                     <p>Total na Máquina: <b id="resTotalMaq"></b></p>
                     <p>Taxa do Banco: <b style="color:#ff4d4d" id="resTaxaMaq"></b></p>
@@ -220,7 +232,6 @@
         </div>
     </div>
 
-    <!-- ABA 2: HISTÓRICO VEICULAR -->
     <div id="aba-historico" class="tab-content">
         <div class="panel">
             <h2>Prontuário Veicular</h2>
@@ -231,7 +242,7 @@
             <table class="table-dark" style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr style="text-align: left; color: #ff4d4d; border-bottom: 2px solid #333;">
-                        <th style="padding: 10px;">DATA</th><th>OS Nº</th><th>PLACA</th><th>TOTAL</th><th>AÇÃO</th>
+                        <th style="padding: 10px;">DATA</th><th>OS Nº</th><th>TIPO</th><th>PLACA</th><th>TOTAL</th><th>AÇÃO</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaHistorico"></tbody>
@@ -239,19 +250,17 @@
         </div>
     </div>
 
-    <!-- ABA 3: DASHBOARD FINANCEIRO E MECÂNICOS -->
     <div id="aba-financeiro" class="tab-content">
         <div class="card-grid">
-            <div class="card"><h4>Bruto Máquina</h4><p id="dashFaturamento">R$ 0,00</p></div>
+            <div class="card"><h4>Faturamento Bruto (Apenas OS)</h4><p id="dashFaturamento">R$ 0,00</p></div>
             <div class="card" style="border-left-color: #ff4d4d;"><h4>Taxas Bancárias</h4><p id="dashTaxas">R$ 0,00</p></div>
             <div class="card" style="border-left-color: #4da6ff;"><h4>Reserva Retida</h4><p id="dashReservas">R$ 0,00</p></div>
-            <div class="card" style="border-left-color: #4caf50;"><h4>Lucro Real</h4><p id="dashLucro">R$ 0,00</p></div>
+            <div class="card" style="border-left-color: #4caf50;"><h4>Lucro Real Global</h4><p id="dashLucro">R$ 0,00</p></div>
         </div>
         
         <div class="panel-flex">
-            <!-- HISTÓRICO GERAL -->
             <div class="panel-col panel">
-                <h2>Histórico de Vendas</h2>
+                <h2>Histórico de Vendas Efetivadas</h2>
                 <table class="table-dark">
                     <thead>
                         <tr><th>DATA</th><th>OS Nº</th><th>PLACA</th><th>VALOR MÁQUINA</th><th>LUCRO LÍQUIDO</th><th>AÇÃO</th></tr>
@@ -260,10 +269,9 @@
                 </table>
             </div>
 
-            <!-- CONTROLE DE MECÂNICOS E ENVIO PARA PLANILHA ONLINE -->
             <div class="panel-col panel" style="max-width: 450px; background: #23232c;">
                 <h2 style="color: #4da6ff;">Controle de Pagamentos (Nuvem)</h2>
-                <p style="font-size: 12px; color: #aaa;">Sincronização direta com a sua Planilha Oficial.</p>
+                <p style="font-size: 11px; color:#aaa; margin-top:-5px;">Orçamentos não aparecem aqui.</p>
                 <table class="table-dark">
                     <thead>
                         <tr><th>MECÂNICO</th><th>PLACA</th><th>M.O</th><th>STATUS</th></tr>
@@ -274,9 +282,43 @@
             </div>
         </div>
     </div>
+
+    <div id="aba-faturamento-pecas" class="tab-content">
+        <div class="card-grid">
+            <div class="card" style="border-left-color: #ff4d4d;">
+                <h4>Investimento (Custo das Peças)</h4>
+                <p id="pecasCustoTotal">R$ 0,00</p>
+            </div>
+            <div class="card" style="border-left-color: #4da6ff;">
+                <h4>Faturamento Bruto de Peças</h4>
+                <p id="pecasVendaTotal">R$ 0,00</p>
+            </div>
+            <div class="card" style="border-left-color: #4caf50;">
+                <h4>Lucro Real Exclusivo em Peças</h4>
+                <p id="pecasLucroTotal">R$ 0,00</p>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Detalhamento por Venda (Apenas OS Efetivadas)</h2>
+            <table class="table-dark">
+                <thead>
+                    <tr>
+                        <th>DATA</th>
+                        <th>OS Nº</th>
+                        <th>ITENS VENDIDOS</th>
+                        <th>CUSTO PAGO</th>
+                        <th>VALOR VENDIDO</th>
+                        <th>LUCRO GERADO</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaDetalhamentoPecas"></tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
-<!-- ================= JANELA FLUTUANTE (MODAL DE PRÉ-VISUALIZAÇÃO / IMPRESSÃO) ================= -->
 <div class="modal-overlay" id="previewModal">
     <div class="modal-content">
         <div class="modal-toolbar no-print">
@@ -295,7 +337,7 @@
                 <div class="os-contact"><p id="docData"></p></div>
             </div>
 
-            <div class="os-bar">ORDEM DE SERVIÇO Nº <span id="docNumOS"></span></div>
+            <div class="os-bar"><span id="docTipoDoc">ORDEM DE SERVIÇO</span> Nº <span id="docNumOS"></span></div>
 
             <div class="section-title">Cliente</div>
             <p style="margin: 5px 0;"><strong id="docCliente"></strong> - Tel: <span id="docTel"></span></p>
@@ -365,6 +407,7 @@
         document.getElementById(tabId).classList.add('active');
         event.currentTarget.classList.add('active');
         if(tabId === 'aba-financeiro') atualizarDashboard();
+        if(tabId === 'aba-faturamento-pecas') atualizarRelatorioPecas();
     }
 
     function abrirPreview() {
@@ -374,7 +417,6 @@
         document.getElementById('previewModal').style.display = 'none';
     }
 
-    // NOVA FUNÇÃO: Limpar a tela para o próximo cliente
     function limparTelaOS() {
         if(confirm("Deseja limpar os dados da tela para iniciar um novo atendimento?")) {
             document.getElementById('nomeCliente').value = '';
@@ -454,6 +496,7 @@
     }
 
     function gerarOS() {
+        const tipoDoc = document.getElementById('tipoDocumento').value;
         const maoObra = extrairNumeroDoTexto(document.getElementById('maoDeObra').value);
         const nomeMecanico = document.getElementById('nomeMecanico').value;
         const selectPagamento = document.getElementById('taxaPagamento');
@@ -472,12 +515,11 @@
             totalCustoBase += p.custoTotalBase;
         });
 
-        const valorBaseReal = totalVendaBase + maoObra;
-        if(valorBaseReal === 0) return alert('A OS precisa ter peças ou mão de obra.');
+        if((totalVendaBase + maoObra) === 0) return alert('O documento precisa ter peças ou mão de obra.');
 
-        const totalComReserva = valorBaseReal + reserva;
+        const totalComReserva = valorBaseReal = totalVendaBase + maoObra + reserva;
         const faturamentoFinal = totalComReserva / (1 - taxaPerc);
-        const acrescimoRateio = faturamentoFinal - valorBaseReal;
+        const acrescimoRateio = faturamentoFinal - (totalVendaBase + maoObra);
 
         let arrPecasFinal = [];
         let maoObraFinal = maoObra;
@@ -498,7 +540,9 @@
         if(placaLimpa.length === 7 && !placaLimpa.includes('-')) placaLimpa = placaLimpa.substring(0,3) + '-' + placaLimpa.substring(3);
 
         const osData = {
-            osNum: osNum, timestamp: Date.now(), data: dataStr,
+            osNum: osNum, 
+            status: tipoDoc, // Grava se é ORÇAMENTO ou OS
+            timestamp: Date.now(), data: dataStr,
             cliente: document.getElementById('nomeCliente').value || 'CLIENTE NÃO INFORMADO',
             tel: document.getElementById('telCliente').value,
             marca: document.getElementById('marca').value, modelo: document.getElementById('modelo').value,
@@ -506,6 +550,8 @@
             placa: placaLimpa, km: document.getElementById('km').value,
             mecanico: nomeMecanico, maoObraOriginal: maoObra, maoObraFinal: maoObraFinal, pecasFinal: arrPecasFinal,
             faturamento: faturamentoFinal,
+            custoTotalPecas: totalCustoBase, // Gravado para o relatório
+            vendaTotalPecas: totalVendaBase, // Gravado para o relatório
             condPag: taxaPerc > 0 ? `*PAGAMENTO VIA ${nomePagamento}` : '',
             itensResumo: pecasTmp.map(p => p.nome).join(', '),
             taxaMaq: faturamentoFinal * taxaPerc, reserva: reserva, 
@@ -517,18 +563,24 @@
         db.clientes[placaLimpa.replace('-','')] = { nome: osData.cliente, tel: osData.tel, marca: osData.marca, modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa };
         localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
 
-        document.getElementById('resTotalMaq').innerText = formatarBRL(osData.faturamento);
-        document.getElementById('resTaxaMaq').innerText = formatarBRL(osData.taxaMaq);
-        document.getElementById('resReserva').innerText = formatarBRL(osData.reserva);
-        document.getElementById('resLucro').innerText = formatarBRL(osData.lucro);
-        
-        document.getElementById('resumoFinanceiro').style.display = 'block';
         document.getElementById('acoesPosGeracao').style.display = 'block';
+
+        if(tipoDoc === 'OS') {
+            document.getElementById('resTotalMaq').innerText = formatarBRL(osData.faturamento);
+            document.getElementById('resTaxaMaq').innerText = formatarBRL(osData.taxaMaq);
+            document.getElementById('resReserva').innerText = formatarBRL(osData.reserva);
+            document.getElementById('resLucro').innerText = formatarBRL(osData.lucro);
+            document.getElementById('resumoFinanceiro').style.display = 'block';
+        } else {
+            document.getElementById('resumoFinanceiro').style.display = 'none';
+            alert("Orçamento gerado com sucesso! Os valores não entrarão no seu lucro até que você efetive o serviço.");
+        }
 
         montarOS(osData);
     }
 
     function montarOS(os) {
+        document.getElementById('docTipoDoc').innerText = os.status === 'ORÇAMENTO' ? 'ORÇAMENTO DE SERVIÇO' : 'ORDEM DE SERVIÇO';
         document.getElementById('docNumOS').innerText = os.osNum;
         document.getElementById('docData').innerText = os.data;
         document.getElementById('docCliente').innerText = os.cliente;
@@ -557,12 +609,26 @@
     }
 
     function excluirOS(osNum) {
-        if(confirm(`Tem certeza que deseja apagar a OS Nº ${osNum}? Isso remove o valor do financeiro.`)) {
+        if(confirm(`Tem certeza que deseja apagar o documento Nº ${osNum}? Isso altera os valores financeiros permanentemente.`)) {
             db.vendas = db.vendas.filter(v => v.osNum !== osNum);
             localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
             
             if(document.getElementById('aba-financeiro').classList.contains('active')) atualizarDashboard();
+            if(document.getElementById('aba-faturamento-pecas').classList.contains('active')) atualizarRelatorioPecas();
             if(document.getElementById('aba-historico').classList.contains('active')) filtrarHistorico();
+        }
+    }
+
+    // Função que transforma o Orçamento em OS Real
+    function efetivarServico(osNum) {
+        if(confirm("O cliente autorizou o serviço? Isso vai transformar o Orçamento em Ordem de Serviço e incluir os valores no seu faturamento.")) {
+            let os = db.vendas.find(v => v.osNum === osNum);
+            if(os) {
+                os.status = 'OS';
+                localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+                filtrarHistorico();
+                alert("Sucesso! Orçamento efetivado. O valor já está no seu caixa.");
+            }
         }
     }
 
@@ -579,10 +645,14 @@
         const filtrados = db.vendas.filter(v => v.placa.replace('-','') === busca);
         document.getElementById('tabelaHistorico').innerHTML = filtrados.map(v => `
             <tr style="border-bottom: 1px solid #333;">
-                <td style="padding: 10px;">${v.data}</td><td>${v.osNum}</td><td>${v.placa}</td>
+                <td style="padding: 10px;">${v.data}</td>
+                <td>${v.osNum}</td>
+                <td>${v.status === 'ORÇAMENTO' ? '<span class="badge-warning">ORÇAMENTO</span>' : '<span class="badge-ok">OS EFETIVADA</span>'}</td>
+                <td>${v.placa}</td>
                 <td><strong style="color:white;">${formatarBRL(v.faturamento)}</strong></td>
                 <td>
-                    <button onclick="verOSAntiga('${v.osNum}')" class="btn-small" style="margin-right: 5px;">🔍 VER / IMPRIMIR</button>
+                    <button onclick="verOSAntiga('${v.osNum}')" class="btn-small" style="margin-right: 5px;">🔍 VER</button>
+                    ${v.status === 'ORÇAMENTO' ? `<button onclick="efetivarServico('${v.osNum}')" class="btn-small" style="background:#007bff; margin-right: 5px;">✔️ APROVAR</button>` : ''}
                     <button onclick="excluirOS('${v.osNum}')" class="btn-remove">🗑️</button>
                 </td>
             </tr>
@@ -594,6 +664,8 @@
         let htmlMecanicos = '';
         
         document.getElementById('tabelaVendas').innerHTML = db.vendas.map(v => {
+            if (v.status !== 'OS') return ''; // FILTRA: Orçamentos não entram no dashboard financeiro
+
             f += v.faturamento; t += v.taxaMaq; r += v.reserva; l += v.lucro;
             
             if(v.mecanico && v.maoObraOriginal > 0) {
@@ -615,10 +687,38 @@
         document.getElementById('dashLucro').innerText = formatarBRL(l);
     }
 
-    function sincronizarPlanilha() {
-        const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado);
+    function atualizarRelatorioPecas() {
+        let custoTotal = 0, vendaTotal = 0, lucroTotal = 0, htmlPecas = '';
         
-        if(pendentes.length === 0) return alert("Nenhuma mão de obra pendente de envio no momento!");
+        db.vendas.forEach(v => {
+            if(v.status !== 'OS') return; // FILTRA: Orçamentos não entram no faturamento de peças
+            
+            if(v.pecasFinal && v.pecasFinal.length > 0) {
+                let custoOS = v.custoTotalPecas || 0; 
+                let vendaOS = v.vendaTotalPecas || 0;
+                let lucroOS = vendaOS - custoOS;
+                
+                custoTotal += custoOS; vendaTotal += vendaOS; lucroTotal += lucroOS;
+                
+                htmlPecas += `<tr>
+                    <td>${v.data}</td><td>${v.osNum}</td><td>${v.itensResumo}</td>
+                    <td style="color:#ff4d4d">${formatarBRL(custoOS)}</td><td style="color:#4da6ff">${formatarBRL(vendaOS)}</td>
+                    <td style="color:#4caf50; font-weight:bold;">${formatarBRL(lucroOS)}</td>
+                </tr>`;
+            }
+        });
+        
+        document.getElementById('pecasCustoTotal').innerText = formatarBRL(custoTotal);
+        document.getElementById('pecasVendaTotal').innerText = formatarBRL(vendaTotal);
+        document.getElementById('pecasLucroTotal').innerText = formatarBRL(lucroTotal);
+        document.getElementById('tabelaDetalhamentoPecas').innerHTML = htmlPecas;
+    }
+
+    function sincronizarPlanilha() {
+        // FILTRA: Só pega serviços pendentes se já tiverem sido efetivados (OS)
+        const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status === 'OS');
+        
+        if(pendentes.length === 0) return alert("Nenhuma mão de obra de OS efetivada pendente de envio!");
 
         const btnSync = document.querySelector('.btn-sync');
         btnSync.innerText = "⏳ ENVIANDO...";
