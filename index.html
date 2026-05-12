@@ -73,7 +73,7 @@
         .btn-close-modal { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px;}
         .btn-close-modal:hover { background: #c82333; }
 
-        /* ESTILO DO DOCUMENTO OS (A4) */
+        /* ESTILO DO DOCUMENTO OS PADRÃO (A4) */
         #documentoOS {
             background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px;
         }
@@ -104,7 +104,7 @@
         @media print {
             body * { visibility: hidden; }
             #previewModal { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: none; padding: 0;}
-            .modal-content { box-shadow: none; max-width: 100%; }
+            .modal-content { box-shadow: none; max-width: 100%; border: none; }
             .modal-toolbar, .no-print { display: none !important; }
             #documentoOS, #documentoOS * { visibility: visible; }
             #documentoOS { padding: 0 !important; margin: 0 !important; }
@@ -113,6 +113,8 @@
     </style>
 </head>
 <body>
+
+<datalist id="lista-clientes-nomes"></datalist>
 
 <datalist id="lista-marcas">
     <option value="VOLKSWAGEN"><option value="CHEVROLET"><option value="FIAT"><option value="FORD">
@@ -155,7 +157,7 @@
                 <div class="input-group">
                     <h3>Veículo e Cliente <span id="avisoEncontrado" class="badge-success">✔ Carregado</span></h3>
                     <div class="row-inputs">
-                        <div style="flex: 2;"><label>CLIENTE:</label><input type="text" id="nomeCliente"></div>
+                        <div style="flex: 2;"><label>CLIENTE:</label><input type="text" id="nomeCliente" list="lista-clientes-nomes" oninput="buscarClientePorNome()"></div>
                         <div style="flex: 1;"><label>TELEFONE:</label><input type="text" id="telCliente" onblur="buscarClienteDb()"></div>
                     </div>
                     <div class="row-inputs">
@@ -393,7 +395,10 @@
 <div class="modal-overlay" id="previewModal">
     <div class="modal-content">
         <div class="modal-toolbar no-print">
-            <button class="btn-print" style="margin: 0; width: auto;" onclick="window.print()">🖨️ IMPRIMIR DOCUMENTO</button>
+            <div>
+                <button class="btn-print" style="margin: 0 5px 0 0; width: auto; background: #007bff;" onclick="imprimirA4()">🖨️ IMPRIMIR A4</button>
+                <button class="btn-print" style="margin: 0; width: auto; background: #ff9800; color: black;" onclick="imprimirCupom()">🧾 IMPRIMIR CUPOM (80mm)</button>
+            </div>
             <button class="btn-close-modal" onclick="fecharPreview()">FECHAR (X)</button>
         </div>
 
@@ -476,12 +481,7 @@
         ]
     };
 
-    // CHAVE FIXA PARA NÃO PERDER OS DADOS ANTIGOS DA AG DIESEL:
     const LOCAL_DB_KEY = 'agDieselDB_Pro'; 
-
-    // =========================================================================
-    // ⚠️ DO PONTO ABAIXO EM DIANTE O CÓDIGO É UNIVERSAL E NUNCA MUDA ⚠️
-    // =========================================================================
 
     let ultimaOSGerada = null;
 
@@ -518,7 +518,7 @@
 
     window.onload = function() {
         document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
-        document.getElementById('uiTituloPainel').innerText = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
+        document.getElementById('uiTituloPainel').innerText = CONFIG.empresa.nome + " - Módulo de OS";
         
         document.getElementById('docNomeEmpresa').innerText = CONFIG.empresa.nome;
         document.getElementById('docCnpjEndereco').innerText = CONFIG.empresa.cnpj + " | " + CONFIG.empresa.endereco;
@@ -539,6 +539,8 @@
             if(t.padrao) opt.selected = true;
             selectTaxa.appendChild(opt);
         });
+
+        atualizarListaNomesCadastrados();
     };
 
     function openTab(tabId) {
@@ -556,6 +558,55 @@
     function fecharPreview() {
         document.getElementById('previewModal').style.display = 'none';
     }
+
+    // =========================================================
+    // INJEÇÃO DA IMPRESSÃO TÉRMICA (80mm)
+    // =========================================================
+    function imprimirA4() {
+        window.print();
+    }
+
+    function imprimirCupom() {
+        const style = document.createElement('style');
+        style.id = 'print-cupom-style';
+        style.innerHTML = `
+            @media print {
+                @page { margin: 0; size: 80mm auto; }
+                #documentoOS { 
+                    width: 76mm !important; padding: 2mm !important; 
+                    font-family: 'Courier New', Courier, monospace !important; 
+                    font-size: 11px !important; color: #000;
+                }
+                #documentoOS .os-header { flex-direction: column; align-items: center; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; }
+                #documentoOS .os-header img { max-width: 60px; margin-bottom: 5px; }
+                #documentoOS .os-company { margin-left: 0; text-align: center; }
+                #documentoOS .os-company h1 { font-size: 14px; margin-bottom: 2px;}
+                #documentoOS .os-contact { text-align: center; margin-top: 5px; width: 100%; }
+                #documentoOS .os-bar { background: none !important; color: #000 !important; border-top: 1px dashed #000; border-bottom: 1px dashed #000; font-size: 13px; margin: 5px 0; padding: 5px 0;}
+                #documentoOS table { width: 100%; font-size: 10px !important; margin-bottom: 5px; }
+                #documentoOS th, #documentoOS td { padding: 2px 0; border: none; border-bottom: 1px dashed #ccc; }
+                #documentoOS th { background: none !important; color: #000; font-weight: bold; border-bottom: 1px solid #000; }
+                
+                /* Oculta colunas menos importantes no cupom para não quebrar a linha */
+                #docTabelaItens th:nth-child(3), #docTabelaItens td:nth-child(3) { display: none; }
+                
+                .totals-container { border-top: 1px dashed #000; padding-top: 5px; width: 100%; align-items: stretch !important; }
+                .totals-row { width: 100% !important; justify-content: space-between; font-size: 11px; }
+                .total-bold { font-size: 14px !important; font-weight: bold; border:none !important; }
+                
+                .signatures { flex-direction: column; margin-top: 20px; gap: 20px; }
+                .sig-box { width: 100% !important; border-top: 1px dashed #000; padding-top: 2px; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        window.print();
+        
+        setTimeout(() => {
+            document.head.removeChild(style);
+        }, 1000);
+    }
+    // =========================================================
 
     function limparTelaOS() {
         if(confirm("Deseja limpar os dados da tela para iniciar um novo atendimento?")) {
@@ -580,12 +631,43 @@
         }
     }
 
+    function atualizarListaNomesCadastrados() {
+        const lista = document.getElementById('lista-clientes-nomes');
+        lista.innerHTML = '';
+        Object.values(db.clientes).forEach(c => {
+            if(c.nome && c.nome !== 'CLIENTE NAO INFORMADO') {
+                let opt = document.createElement('option');
+                opt.value = `${c.nome} (${c.placa})`;
+                lista.appendChild(opt);
+            }
+        });
+    }
+
+    function buscarClientePorNome() {
+        let inputVal = document.getElementById('nomeCliente').value;
+        let match = inputVal.match(/\((.*?)\)/);
+        
+        if(match) {
+            let placaBuscada = match[1].replace('-', '');
+            let c = db.clientes[placaBuscada];
+            if(c) {
+                document.getElementById('nomeCliente').value = c.nome; 
+                ['telCliente','marca','modelo','cor','ano','placa'].forEach(id => {
+                    if(document.getElementById(id).value === '') document.getElementById(id).value = c[id] || '';
+                });
+                document.getElementById('avisoEncontrado').style.display = 'inline';
+                setTimeout(() => document.getElementById('avisoEncontrado').style.display = 'none', 3000);
+            }
+        }
+    }
+
     const bancoCarros = {
         "VOLKSWAGEN": ["GOL", "FOX", "POLO", "SAVEIRO", "AMAROK", "JETTA", "VOYAGE", "NIVUS"],
         "FIAT": ["STRADA", "TORO", "UNO", "PALIO", "ARGO", "MOBI", "FASTBACK", "PULSE"],
         "CHEVROLET": ["ONIX", "S10", "PRISMA", "TRACKER", "SPIN", "COBALT"],
         "TOYOTA": ["COROLLA", "HILUX", "YARIS", "SW4"],
-        "HYUNDAI": ["HB20", "HB20S", "HB20X", "CRETA"]
+        "HYUNDAI": ["HB20", "HB20S", "HB20X", "CRETA"],
+        "HONDA": ["CIVIC", "CITY", "HR-V", "FIT", "CR-V", "WR-V"]
     };
 
     function atualizarModelos() {
@@ -722,6 +804,9 @@
         localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
 
         ultimaOSGerada = osData; 
+        
+        atualizarListaNomesCadastrados();
+        
         document.getElementById('acoesPosGeracao').style.display = 'block';
 
         if(tipoDoc === 'OS') {
@@ -1136,8 +1221,6 @@
     }
 
     function sincronizarPlanilha() {
-        if(CONFIG.sistema.linkPlanilha === "URL_DO_GOOGLE_APPS_SCRIPT_DO_CLIENTE_AQUI") return alert("Configure a URL da planilha no painel CONFIG primeiro.");
-        
         const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status !== 'ORÇAMENTO');
         
         if(pendentes.length === 0) return alert("Nenhuma mao de obra pendente!");
