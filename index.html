@@ -134,10 +134,10 @@
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('aba-os')">NOVA ORDEM DE SERVIÇO</button>
         <button class="tab-btn" onclick="openTab('aba-historico')">HISTÓRICO / PÁTIO</button>
-        <button class="tab-btn" onclick="openTab('aba-financeiro')">DASHBOARD FINANCEIRO</button>
-        <button class="tab-btn" onclick="openTab('aba-faturamento-pecas')">📊 RELATÓRIO DE PEÇAS</button>
+        <button class="tab-btn" onclick="openTab('aba-financeiro')">🔒 FINANCEIRO</button>
+        <button class="tab-btn" onclick="openTab('aba-faturamento-pecas')">🔒 RELATÓRIO PEÇAS</button>
         <button class="tab-btn" style="background:#007bff; color:white;" onclick="openTab('aba-clientes')">👥 CLIENTES</button>
-        <button class="tab-btn" style="background:#4a4a5a; color:white;" onclick="openTab('aba-backup')">💾 BACKUP</button>
+        <button class="tab-btn" style="background:#4a4a5a; color:white;" onclick="openTab('aba-backup')">🔒 BACKUP</button>
     </div>
 
     <div id="aba-os" class="tab-content active">
@@ -491,7 +491,6 @@
     </div>
 </div>
 
-
 <script>
     // =========================================================================
     // ⚙️ DADOS FIXOS DA AG DIESEL 
@@ -510,7 +509,8 @@
             linkPlanilha: "https://script.google.com/macros/s/AKfycbw7UDUx2m0YQKrdMXuCZdcDj7AIOW9mjX0p1Gl4wh2rcAcqHNLEbXdGik2zqTGA5maj/exec",
             valorReserva: 50.00,
             margemExtraPadrao: 1.25, 
-            custoPecaPadrao: 0.75 
+            custoPecaPadrao: 0.75,
+            senhaAdmin: "1234" // <--- SENHA DE ACESSO AO FINANCEIRO
         },
         equipe: ["VICTOR", "JEAN", "PAULO", "ISLAN", "LOURO", "PAJÉ"],
         taxas: [
@@ -528,6 +528,7 @@
     const LOCAL_DB_KEY = 'agDieselDB_Pro'; 
 
     let ultimaOSGerada = null;
+    let adminLogado = false; // Controle da Sessão de Senha
 
     document.addEventListener('input', e => {
         if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
@@ -587,10 +588,32 @@
         atualizarListaNomesCadastrados();
     };
 
+    // =========================================================
+    // LÓGICA DO CADEADO (SENHA NO FINANCEIRO E BACKUP)
+    // =========================================================
     function openTab(tabId) {
+        // Verifica se a aba exige senha e se o admin ainda não logou
+        if ((tabId === 'aba-financeiro' || tabId === 'aba-faturamento-pecas' || tabId === 'aba-backup') && !adminLogado) {
+            let senhaDigitada = prompt("🔒 ÁREA RESTRITA!\nDigite a senha de administrador:");
+            
+            if (senhaDigitada === CONFIG.sistema.senhaAdmin) {
+                adminLogado = true; // Libera acesso para a sessão toda (até apertar F5)
+            } else {
+                alert("Senha incorreta. Acesso negado.");
+                return; // Trava a função e não muda de aba
+            }
+        }
+
         document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        
+        // Ativa o botão correto mesmo sem usar 'event.currentTarget'
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if(btn.getAttribute('onclick').includes(tabId)) {
+                btn.classList.add('active');
+            }
+        });
+
         if(tabId === 'aba-financeiro') atualizarDashboard();
         if(tabId === 'aba-faturamento-pecas') atualizarRelatorioPecas();
         if(tabId === 'aba-clientes') atualizarAbaClientes();
@@ -1175,35 +1198,37 @@
 
     function atualizarAbaClientes() {
         let html = '';
-        let agora = Date.now();
-
-        Object.keys(db.clientes).forEach(placaKey => {
-            let c = db.clientes[placaKey];
-            
-            let ultimaData = 0;
-            db.vendas.forEach(v => {
-                if (v.placa.replace('-','') === placaKey && v.timestamp > ultimaData) {
-                    ultimaData = v.timestamp;
-                }
-            });
-            
-            let dataUltimaStr = ultimaData > 0 ? new Date(ultimaData).toLocaleDateString('pt-BR') : 'Sem registro';
-            let dias = ultimaData > 0 ? Math.floor((agora - ultimaData) / (1000 * 60 * 60 * 24)) : 0;
-            
-            let badgeDias = '';
-            if(ultimaData > 0) {
-                badgeDias = dias > 180 ? `<span class="badge-warning">Falta ha ${dias} dias</span>` : `<span class="badge-ok">Veio ha ${dias} dias</span>`;
+        let clientesMap = {};
+        
+        db.vendas.forEach(v => {
+            if(v.status === 'ORÇAMENTO') return; 
+            if(!clientesMap[v.tel]) {
+                clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp };
             }
+            clientesMap[v.tel].veiculos.add(`${v.marca} ${v.modelo} (${v.placa})`);
+            if(v.timestamp > clientesMap[v.tel].ultimaData) {
+                clientesMap[v.tel].ultimaData = v.timestamp;
+            }
+        });
+
+        let agora = Date.now();
+        Object.keys(clientesMap).forEach(tel => {
+            let c = clientesMap[tel];
+            let dias = Math.floor((agora - c.ultimaData) / (1000 * 60 * 60 * 24));
+            let dataUltimaStr = new Date(c.ultimaData).toLocaleDateString('pt-BR');
+            let veiculosStr = Array.from(c.veiculos).join(', ');
+            
+            let badgeDias = dias > 180 ? `<span class="badge-warning">Falta ha ${dias} dias</span>` : `<span class="badge-ok">Veio ha ${dias} dias</span>`;
 
             html += `<tr style="border-bottom: 1px solid #333;">
                 <td style="padding: 10px;">${c.nome}</td>
-                <td>${c.tel}</td>
-                <td>${c.marca || ''} ${c.modelo || ''} (${c.placa || placaKey})</td>
+                <td>${tel}</td>
+                <td>${veiculosStr}</td>
                 <td>${dataUltimaStr}<br>${badgeDias}</td>
                 <td>
-                    <button class="btn-small" style="background:#007bff; padding: 8px; margin-right:5px;" onclick="abrirEditarCliente('${placaKey}')">✏️ EDITAR</button>
-                    <button class="btn-small" style="background:#dc3545; padding: 8px; margin-right:5px;" onclick="excluirCliente('${placaKey}')">🗑️ EXCLUIR</button>
-                    <button class="btn-small" style="background:#25D366; padding: 8px;" onclick="zapMarketing('${c.tel}', '${c.nome}', ${dias})">📱 MARKETING</button>
+                    <button class="btn-small" style="background:#007bff; padding: 8px; margin-right:5px;" onclick="abrirEditarCliente('${c.placa || Array.from(c.veiculos)[0].match(/\((.*?)\)/)[1]}')">✏️ EDITAR</button>
+                    <button class="btn-small" style="background:#dc3545; padding: 8px; margin-right:5px;" onclick="excluirCliente('${c.placa || Array.from(c.veiculos)[0].match(/\((.*?)\)/)[1].replace('-','')}')">🗑️ EXCLUIR</button>
+                    <button class="btn-small" style="background:#25D366; padding: 8px;" onclick="zapMarketing('${tel}', '${c.nome}', ${dias})">📱 MARKETING</button>
                 </td>
             </tr>`;
         });
@@ -1211,9 +1236,13 @@
     }
 
     function abrirEditarCliente(placaKey) {
-        let c = db.clientes[placaKey];
-        if(!c) return;
-        document.getElementById('editPlacaAntiga').value = placaKey;
+        let placaKeyLimpa = placaKey.replace(/[^A-Z0-9]/g, '');
+        let c = db.clientes[placaKeyLimpa];
+        if(!c) {
+            alert("Não foi possível carregar os dados deste cliente para edição.");
+            return;
+        }
+        document.getElementById('editPlacaAntiga').value = placaKeyLimpa;
         document.getElementById('editNome').value = c.nome || '';
         document.getElementById('editTel').value = c.tel || '';
         document.getElementById('editMarca').value = c.marca || '';
