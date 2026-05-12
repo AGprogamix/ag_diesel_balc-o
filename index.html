@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AG Diesel - Gestão Pro</title>
+    <title>Sistema de Gestão Pro</title>
     <style>
         /* ================= TEMA ESCURO (SISTEMA) ================= */
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: #1a1a1d; margin: 0; color: #e0e0e0; }
@@ -123,7 +122,7 @@
 </datalist>
 <datalist id="lista-modelos"></datalist>
 <datalist id="lista-cores"><option value="BRANCO"><option value="PRETO"><option value="PRATA"><option value="CINZA"><option value="VERMELHO"></datalist>
-<datalist id="lista-mecanicos"><option value="VICTOR"><option value="JEAN"><option value="PAULO"><option value="ISLAN"><option value="LOURO"><option value="PAJÉ"></datalist>
+<datalist id="lista-mecanicos"></datalist>
 <datalist id="sugestoes-pecas">
     <option value="ÓLEO DO MOTOR 5W30"><option value="FILTRO DE ÓLEO"><option value="KIT CORREIA DENTADA"><option value="PASTILHA DE FREIO">
     <option value="AMORTECEDOR DIANTEIRO"><option value="BOMBA D'ÁGUA"><option value="FLUIDO DE FREIO DOT 4"><option value="ADITIVO DE RADIADOR">
@@ -136,13 +135,14 @@
         <button class="tab-btn" onclick="openTab('aba-financeiro')">DASHBOARD FINANCEIRO</button>
         <button class="tab-btn" onclick="openTab('aba-faturamento-pecas')">📊 RELATÓRIO DE PEÇAS</button>
         <button class="tab-btn" style="background:#007bff; color:white;" onclick="openTab('aba-clientes')">👥 CLIENTES</button>
+        <button class="tab-btn" style="background:#4a4a5a; color:white;" onclick="openTab('aba-backup')">💾 BACKUP</button>
     </div>
 
     <div id="aba-os" class="tab-content active">
         <div class="panel-flex">
             
             <div class="panel-col panel" style="max-width: 480px;">
-                <h2>AG Diesel - Módulo de OS</h2>
+                <h2 id="uiTituloPainel">Módulo de OS</h2>
                 
                 <div class="input-group" style="background: #331414; border-color: #ff4d4d;">
                     <h3 style="color: #ff4d4d;">Tipo de Documento</h3>
@@ -164,7 +164,7 @@
                         <div style="flex: 1;"><label>PLACA:</label><input type="text" id="placa" onblur="buscarClienteDb()"></div>
                     </div>
                     <div class="row-inputs">
-                        <div style="flex: 1;"><label>ANO:</label><input type="text" id="ano" list="lista-anos"></div>
+                        <div style="flex: 1;"><label>ANO:</label><input type="text" id="ano"></div>
                         <div style="flex: 1;"><label>COR:</label><input type="text" id="cor" list="lista-cores"></div>
                         <div style="flex: 1;"><label>KM ATUAL:</label><input type="text" id="km"></div>
                     </div>
@@ -189,24 +189,15 @@
                         <div style="flex: 1;"><label>VALOR M.O (R$):</label><input type="text" id="maoDeObra" placeholder="Ex: 350,00" inputmode="decimal"></div>
                     </div>
                     <label>PAGAMENTO:</label>
-                    <select id="taxaPagamento">
-                        <option value="0.00" data-nome="DINHEIRO / PIX">DINHEIRO / PIX (0%)</option>
-                        <option value="1.52" data-nome="DÉBITO">DÉBITO (1,52%)</option>
-                        <option value="4.70" data-nome="CRÉDITO 1X">CRÉDITO 1X (4,70%)</option>
-                        <option value="5.92" data-nome="CRÉDITO 2X">CRÉDITO 2X (5,92%)</option>
-                        <option value="7.04" data-nome="CRÉDITO 3X">CRÉDITO 3X (7,04%)</option>
-                        <option value="8.28" data-nome="CRÉDITO 4X">CRÉDITO 4X (8,28%)</option>
-                        <option value="9.31" data-nome="CRÉDITO 5X">CRÉDITO 5X (9,31%)</option>
-                        <option value="10.24" data-nome="CRÉDITO 6X" selected>CRÉDITO 6X (10,24%)</option>
-                    </select>
+                    <select id="taxaPagamento"></select>
 
                     <div class="checkbox-container">
                         <input type="checkbox" id="aplicarReserva" checked>
-                        <label for="aplicarReserva">DILUIR R$ 50,00 DE RESERVA</label>
+                        <label for="aplicarReserva" id="uiLabelReserva">DILUIR RESERVA</label>
                     </div>
                     <div class="checkbox-container">
                         <input type="checkbox" id="aplicarMargem" checked>
-                        <label for="aplicarMargem">ADICIONAR +25% DE MARGEM EXTRA</label>
+                        <label for="aplicarMargem" id="uiLabelMargem">ADICIONAR MARGEM EXTRA</label>
                     </div>
                     <div class="checkbox-container" style="border-color: #007bff;">
                         <input type="checkbox" id="repassarTaxa" checked>
@@ -375,6 +366,28 @@
         </div>
     </div>
 
+    <div id="aba-backup" class="tab-content">
+        <div class="panel">
+            <h2>Segurança e Backup de Dados</h2>
+            <p style="color:#aaa; font-size:13px; margin-top:-5px;">Proteja os dados da oficina salvando um backup no seu computador regularmente.</p>
+
+            <div class="card-grid" style="margin-top: 20px;">
+                <div class="card" style="border-left-color: #007bff; background: #1e1e24;">
+                    <h4 style="color: #007bff;">Exportar Dados Atuais</h4>
+                    <p style="font-size:12px; font-weight:normal; margin-top:5px; color:#aaa;">Baixe um arquivo contendo todo o histórico de clientes, veículos e OS do sistema.</p>
+                    <button class="btn-sync" style="margin-top:15px; width:100%;" onclick="exportarBackup()">💾 GERAR BACKUP DE SEGURANÇA</button>
+                </div>
+
+                <div class="card" style="border-left-color: #ffcc00; background: #1e1e24;">
+                    <h4 style="color: #ffcc00;">Restaurar Sistema</h4>
+                    <p style="font-size:12px; font-weight:normal; margin-top:5px; color:#aaa;">Se você trocou de computador ou limpou o navegador, carregue seu último arquivo aqui.</p>
+                    <input type="file" id="arquivoBackup" accept=".json" style="display:none;" onchange="importarBackup(event)">
+                    <button class="btn-add" style="background:#ffcc00; color:black; margin-top:15px; height: 47px;" onclick="document.getElementById('arquivoBackup').click()">📂 CARREGAR ARQUIVO DE BACKUP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="modal-overlay" id="previewModal">
@@ -386,11 +399,11 @@
 
         <div id="documentoOS">
             <div class="os-header">
-                <img src="logo.png" alt="LOGO" onerror="this.style.display='none'">
+                <img id="logoEmpresa" src="" alt="LOGO" onerror="this.style.display='none'">
                 <div class="os-company">
-                    <h1>AG DIESEL TELEMECANICA</h1>
-                    <p>10.488.157/0001-61 | Avenida Luís Pio - Mangabeira</p>
-                    <p>Eusébio/CE | Tel.: (85) 99419-0644</p>
+                    <h1 id="docNomeEmpresa">NOME DA EMPRESA</h1>
+                    <p id="docCnpjEndereco">CNPJ | Endereço</p>
+                    <p id="docCidadeTel">Cidade | Telefone</p>
                 </div>
                 <div class="os-contact"><p id="docData"></p></div>
             </div>
@@ -417,10 +430,10 @@
                 <div class="totals-row total-bold"><span>TOTAL:</span><span id="docTotal"></span></div>
             </div>
 
-            <p style="margin-top: 20px; font-size: 10px;"><strong id="docPag"></strong> | Garantia: 90 dias.</p>
+            <p style="margin-top: 20px; font-size: 10px;"><strong id="docPag"></strong> | Garantia de servico / pecas de 90 dias.</p>
 
             <div class="signatures">
-                <div class="sig-box">AG DIESEL TELEMECANICA</div>
+                <div class="sig-box" id="docSigEmpresa">NOME DA EMPRESA</div>
                 <div class="sig-box" id="docSigCliente">CLIENTE</div>
             </div>
         </div>
@@ -428,8 +441,46 @@
 </div>
 
 <script>
-    const LINK_DA_PLANILHA = "https://script.google.com/macros/s/AKfycbw7UDUx2m0YQKrdMXuCZdcDj7AIOW9mjX0p1Gl4wh2rcAcqHNLEbXdGik2zqTGA5maj/exec"; 
+    // =========================================================================
+    // ⚙️ PAINEL DE CONFIGURAÇÃO MATRIZ (PREENCHA AQUI AO VENDER O SISTEMA)
+    // =========================================================================
+    const CONFIG = {
+        // Altere isso para CADA cliente para não misturar os bancos de dados
+        appID: "nome_oficina_cliente_sem_espacos", 
+        
+        empresa: {
+            nome: "NOME DA OFICINA AQUI",
+            cnpj: "00.000.000/0001-00",
+            endereco: "Avenida Principal, 1000 - Centro",
+            cidade: "Sua Cidade/UF",
+            telefone: "(00) 90000-0000",
+            logo: "logo.png" // Nome da imagem no repositório do GitHub
+        },
+        
+        sistema: {
+            tituloApp: "Gestão Pro",
+            linkPlanilha: "URL_DO_GOOGLE_APPS_SCRIPT_DO_CLIENTE_AQUI",
+            valorReserva: 50.00,
+            margemExtraPadrao: 1.25, // 1.25 = +25% de margem
+            custoPecaPadrao: 0.75 // Estima que a peça custa 75% da tabela para relatório
+        },
 
+        equipe: ["MECÂNICO 1", "MECÂNICO 2", "MECÂNICO 3"],
+
+        // Taxas cobradas pela maquininha do cliente
+        taxas: [
+            { nome: "DINHEIRO / PIX", valor: 0.00 },
+            { nome: "DÉBITO", valor: 1.50 },
+            { nome: "CRÉDITO 1X", valor: 4.50 },
+            { nome: "CRÉDITO 2X", valor: 5.50 },
+            { nome: "CRÉDITO 6X", valor: 10.00, padrao: true } // padrao: true = Já vem selecionada
+        ]
+    };
+    // =========================================================================
+    // ⚠️ DO PONTO ABAIXO EM DIANTE O CÓDIGO É UNIVERSAL E NUNCA MUDA ⚠️
+    // =========================================================================
+
+    const LOCAL_DB_KEY = 'db_' + CONFIG.appID;
     let ultimaOSGerada = null;
 
     document.addEventListener('input', e => {
@@ -455,13 +506,39 @@
         return dbAtual;
     }
 
-    let dbTemp = JSON.parse(localStorage.getItem('agDieselDB_Pro')) || { clientes: {}, vendas: [], proximaOS: 1 };
+    let dbTemp = JSON.parse(localStorage.getItem(LOCAL_DB_KEY)) || { clientes: {}, vendas: [], proximaOS: 1 };
     if (!dbTemp.proximaOS) dbTemp.proximaOS = 1; 
     let db = limparOSAntigas(dbTemp);
-    localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+    localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
     
     let pecasTmp = [];
     const formatarBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    // Injeção Automática das Configurações
+    window.onload = function() {
+        document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
+        document.getElementById('uiTituloPainel').innerText = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
+        
+        document.getElementById('docNomeEmpresa').innerText = CONFIG.empresa.nome;
+        document.getElementById('docCnpjEndereco').innerText = CONFIG.empresa.cnpj + " | " + CONFIG.empresa.endereco;
+        document.getElementById('docCidadeTel').innerText = CONFIG.empresa.cidade + " | Tel.: " + CONFIG.empresa.telefone;
+        document.getElementById('docSigEmpresa').innerText = CONFIG.empresa.nome;
+        document.getElementById('logoEmpresa').src = CONFIG.empresa.logo;
+
+        document.getElementById('uiLabelReserva').innerText = `DILUIR R$ ${CONFIG.sistema.valorReserva.toFixed(2).replace('.', ',')} DE RESERVA`;
+        document.getElementById('uiLabelMargem').innerText = `ADICIONAR +${((CONFIG.sistema.margemExtraPadrao - 1) * 100).toFixed(0)}% DE MARGEM EXTRA`;
+
+        const listaMecanicos = document.getElementById('lista-mecanicos');
+        CONFIG.equipe.forEach(m => listaMecanicos.appendChild(new Option(m)));
+
+        const selectTaxa = document.getElementById('taxaPagamento');
+        CONFIG.taxas.forEach(t => {
+            let opt = new Option(`${t.nome} (${t.valor.toString().replace('.',',')}%)`, t.valor);
+            opt.setAttribute('data-nome', t.nome);
+            if(t.padrao) opt.selected = true;
+            selectTaxa.appendChild(opt);
+        });
+    };
 
     function openTab(tabId) {
         document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
@@ -491,7 +568,7 @@
             document.getElementById('km').value = '';
             document.getElementById('nomeMecanico').value = '';
             document.getElementById('maoDeObra').value = '';
-            document.getElementById('repassarTaxa').checked = true; // Reseta o repasse
+            document.getElementById('repassarTaxa').checked = true;
             pecasTmp = [];
             ultimaOSGerada = null; 
             renderPecas();
@@ -539,7 +616,7 @@
             return alert("Por favor, digite o NOME da peca e um VALOR valido.");
         }
 
-        pecasTmp.push({ id: Date.now(), nome, qtd, tabelaUnit: preco, custoUnit: preco * 0.75 });
+        pecasTmp.push({ id: Date.now(), nome, qtd, tabelaUnit: preco, custoUnit: preco * CONFIG.sistema.custoPecaPadrao });
         renderPecas();
         document.getElementById('nomePeca').value = '';
         document.getElementById('qtdPeca').value = '1';
@@ -559,9 +636,6 @@
         `).join('');
     }
 
-    // =========================================================
-    // LÓGICA ATUALIZADA: REPASSE DE TAXA E CÁLCULO DE LUCRO
-    // =========================================================
     function gerarOS() {
         const tipoDoc = document.getElementById('tipoDocumento').value;
         const maoObra = extrairNumeroDoTexto(document.getElementById('maoDeObra').value);
@@ -570,8 +644,8 @@
         const taxaPerc = parseFloat(selectPagamento.value) / 100;
         const nomePagamento = selectPagamento.options[selectPagamento.selectedIndex].getAttribute('data-nome');
         
-        const reserva = document.getElementById('aplicarReserva').checked ? 50 : 0;
-        const margemExtra = document.getElementById('aplicarMargem').checked ? 1.25 : 1.0;
+        const reserva = document.getElementById('aplicarReserva').checked ? CONFIG.sistema.valorReserva : 0;
+        const margemExtra = document.getElementById('aplicarMargem').checked ? CONFIG.sistema.margemExtraPadrao : 1.0;
         const repassarTaxa = document.getElementById('repassarTaxa').checked;
 
         let totalVendaBase = 0, totalCustoBase = 0;
@@ -588,7 +662,6 @@
         const valorBaseReal = totalVendaBase + maoObra;
         const totalComReserva = valorBaseReal + reserva;
         
-        // Se repassar a taxa, infla o valor final. Se não, o valor final é o valor seco.
         let faturamentoFinal;
         if (repassarTaxa) {
             faturamentoFinal = totalComReserva / (1 - taxaPerc);
@@ -597,9 +670,8 @@
         }
 
         const valorDescontadoMaquina = faturamentoFinal * taxaPerc;
-        const acrescimoRateio = faturamentoFinal - valorBaseReal; // O excedente que o cliente paga
+        const acrescimoRateio = faturamentoFinal - valorBaseReal; 
 
-        // Lucro Universal: O que cai na conta, menos a reserva guardada, menos o custo das peças.
         const dinheiroNaConta = faturamentoFinal - valorDescontadoMaquina;
         const lucroReal = dinheiroNaConta - reserva - totalCustoBase;
 
@@ -646,7 +718,7 @@
         db.vendas.push(osData);
         db.proximaOS++; 
         db.clientes[placaLimpa.replace('-','')] = { nome: osData.cliente, tel: osData.tel, marca: osData.marca, modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa };
-        localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
 
         ultimaOSGerada = osData; 
         document.getElementById('acoesPosGeracao').style.display = 'block';
@@ -720,7 +792,7 @@
         
         let msg = `Ola, *${osSelecionada.cliente}*!\n${tituloSaudacao}\n\n`;
         
-        msg += `*AG DIESEL TELEMECANICA*\n`;
+        msg += `*${CONFIG.empresa.nome}*\n`;
         msg += `-----------------------------------\n`;
         msg += `*Documento:* ${osSelecionada.osNum} (${tipoDocStr})\n`;
         msg += `*Veiculo:* ${osSelecionada.marca} ${osSelecionada.modelo} (${osSelecionada.placa})\n`;
@@ -762,7 +834,7 @@
     function excluirOS(osNum) {
         if(confirm(`Tem certeza que deseja apagar o documento No ${osNum}? Isso altera os valores financeiros permanentemente.`)) {
             db.vendas = db.vendas.filter(v => v.osNum !== osNum);
-            localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
             
             if(document.getElementById('aba-financeiro').classList.contains('active')) atualizarDashboard();
             if(document.getElementById('aba-faturamento-pecas').classList.contains('active')) atualizarRelatorioPecas();
@@ -777,7 +849,7 @@
             if(os) {
                 os.status = 'OS';
                 os.fase = 'EM SERVIÇO';
-                localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+                localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
                 filtrarHistorico();
                 alert("Sucesso! Orcamento efetivado.");
             }
@@ -796,7 +868,7 @@
         let os = db.vendas.find(v => v.osNum === osNum);
         if(os) {
             os.fase = novaFase;
-            localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
         }
     }
 
@@ -958,7 +1030,7 @@
         let link = document.createElement("a");
         let url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", `AG_Diesel_Relatorio_${tipo}.csv`);
+        link.setAttribute("download", `Relatorio_${tipo}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -1006,17 +1078,71 @@
         if(!telLimpo.startsWith('55')) telLimpo = '55' + telLimpo;
         
         let msg = "";
+        let nomeOficina = CONFIG.empresa.nome;
+
         if(dias > 180) {
-            msg = `Ola, *${nome}*! Tudo bem?\n\nAqui e da equipe *AG DIESEL TELEMECANICA*.\nNotamos que ja faz um tempo desde a sua ultima visita. Como esta o funcionamento do veiculo?\n\nLembre-se que a manutencao preventiva e fundamental. Se precisar agendar uma revisao, estamos a disposicao!`;
+            msg = `Ola, *${nome}*! Tudo bem?\n\nAqui e da equipe *${nomeOficina}*.\nNotamos que ja faz um tempo desde a sua ultima visita. Como esta o funcionamento do veiculo?\n\nLembre-se que a manutencao preventiva e fundamental. Se precisar agendar uma revisao, estamos a disposicao!`;
         } else {
-            msg = `Ola, *${nome}*! Tudo bem?\n\nPassando aqui em nome da *AG DIESEL TELEMECANICA* para acompanhar o seu atendimento.\n\nGostariamos de saber se o servico realizado recentemente ficou 100%. A sua satisfacao e a nossa prioridade. Qualquer coisa, estamos a disposicao!`;
+            msg = `Ola, *${nome}*! Tudo bem?\n\nPassando aqui em nome da *${nomeOficina}* para acompanhar o seu atendimento.\n\nGostariamos de saber se o servico realizado recentemente ficou 100%. A sua satisfacao e a nossa prioridade. Qualquer coisa, estamos a disposicao!`;
         }
         
         let link = `https://wa.me/${telLimpo}?text=${encodeURIComponent(msg)}`;
         window.open(link, '_blank');
     }
 
+    // =========================================================
+    // MÓDULO DE BACKUP E RESTAURAÇÃO DE DADOS
+    // =========================================================
+    function exportarBackup() {
+        const dataStr = localStorage.getItem(LOCAL_DB_KEY);
+        if(!dataStr || dataStr.length < 50) return alert("Nenhum dado encontrado para gerar backup.");
+        
+        const blob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        const dataFormatada = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+        a.href = url;
+        a.download = `Backup_${CONFIG.appID}_${dataFormatada}.json`;
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importarBackup(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                // Validação básica se é realmente um arquivo do nosso sistema
+                if(data && typeof data === 'object' && Array.isArray(data.vendas)) { 
+                    if(confirm("ATENÇÃO: Restaurar o backup apagará os dados atuais do navegador que não estiverem neste arquivo. Tem certeza?")) {
+                        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(data));
+                        alert("Backup restaurado com sucesso! O sistema será recarregado agora.");
+                        location.reload();
+                    }
+                } else {
+                    alert("⚠️ O arquivo selecionado não parece ser um backup válido deste sistema.");
+                }
+            } catch (err) {
+                alert("Erro ao tentar ler o arquivo. Ele pode estar corrompido.");
+            }
+        };
+        reader.readAsText(file);
+        
+        // Reseta o input para caso ele queira subir o mesmo arquivo de novo
+        event.target.value = ''; 
+    }
+
     function sincronizarPlanilha() {
+        if(CONFIG.sistema.linkPlanilha === "URL_DO_GOOGLE_APPS_SCRIPT_DO_CLIENTE_AQUI") return alert("Configure a URL da planilha no painel CONFIG primeiro.");
+        
         const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status !== 'ORÇAMENTO');
         
         if(pendentes.length === 0) return alert("Nenhuma mao de obra pendente!");
@@ -1033,14 +1159,14 @@
             valor: v.maoObraOriginal.toFixed(2).replace('.', ',') 
         }));
 
-        fetch(LINK_DA_PLANILHA, {
+        fetch(CONFIG.sistema.linkPlanilha, {
             method: 'POST',
             mode: 'no-cors', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         }).then(() => {
             pendentes.forEach(v => v.sincronizado = true);
-            localStorage.setItem('agDieselDB_Pro', JSON.stringify(db));
+            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
             
             btnSync.innerText = "✔️ ENVIADOS COM SUCESSO!";
             btnSync.style.background = "#4caf50";
