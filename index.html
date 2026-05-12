@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão Pro</title>
+    <title>AG Diesel - Gestão Pro</title>
     <style>
         /* ================= TEMA ESCURO (SISTEMA) ================= */
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: #1a1a1d; margin: 0; color: #e0e0e0; }
@@ -142,7 +142,7 @@
         <div class="panel-flex">
             
             <div class="panel-col panel" style="max-width: 480px;">
-                <h2 id="uiTituloPainel">Módulo de OS</h2>
+                <h2 id="uiTituloPainel">AG Diesel - Módulo de OS</h2>
                 
                 <div class="input-group" style="background: #331414; border-color: #ff4d4d;">
                     <h3 style="color: #ff4d4d;">Tipo de Documento</h3>
@@ -442,45 +442,47 @@
 
 <script>
     // =========================================================================
-    // ⚙️ PAINEL DE CONFIGURAÇÃO MATRIZ (PREENCHA AQUI AO VENDER O SISTEMA)
+    // ⚙️ DADOS FIXOS DA AG DIESEL 
     // =========================================================================
     const CONFIG = {
-        // Altere isso para CADA cliente para não misturar os bancos de dados
-        appID: "nome_oficina_cliente_sem_espacos", 
-        
         empresa: {
-            nome: "NOME DA OFICINA AQUI",
-            cnpj: "00.000.000/0001-00",
-            endereco: "Avenida Principal, 1000 - Centro",
-            cidade: "Sua Cidade/UF",
-            telefone: "(00) 90000-0000",
-            logo: "logo.png" // Nome da imagem no repositório do GitHub
+            nome: "AG DIESEL TELEMECANICA",
+            cnpj: "10.488.157/0001-61",
+            endereco: "Avenida Luís Pio - Mangabeira",
+            cidade: "Eusébio/CE",
+            telefone: "(85) 99419-0644",
+            logo: "logo.png" 
         },
         
         sistema: {
             tituloApp: "Gestão Pro",
-            linkPlanilha: "URL_DO_GOOGLE_APPS_SCRIPT_DO_CLIENTE_AQUI",
+            linkPlanilha: "https://script.google.com/macros/s/AKfycbw7UDUx2m0YQKrdMXuCZdcDj7AIOW9mjX0p1Gl4wh2rcAcqHNLEbXdGik2zqTGA5maj/exec",
             valorReserva: 50.00,
-            margemExtraPadrao: 1.25, // 1.25 = +25% de margem
-            custoPecaPadrao: 0.75 // Estima que a peça custa 75% da tabela para relatório
+            margemExtraPadrao: 1.25, 
+            custoPecaPadrao: 0.75 
         },
 
-        equipe: ["MECÂNICO 1", "MECÂNICO 2", "MECÂNICO 3"],
+        equipe: ["VICTOR", "JEAN", "PAULO", "ISLAN", "LOURO", "PAJÉ"],
 
-        // Taxas cobradas pela maquininha do cliente
         taxas: [
             { nome: "DINHEIRO / PIX", valor: 0.00 },
-            { nome: "DÉBITO", valor: 1.50 },
-            { nome: "CRÉDITO 1X", valor: 4.50 },
-            { nome: "CRÉDITO 2X", valor: 5.50 },
-            { nome: "CRÉDITO 6X", valor: 10.00, padrao: true } // padrao: true = Já vem selecionada
+            { nome: "DÉBITO", valor: 1.52 },
+            { nome: "CRÉDITO 1X", valor: 4.70 },
+            { nome: "CRÉDITO 2X", valor: 5.92 },
+            { nome: "CRÉDITO 3X", valor: 7.04 },
+            { nome: "CRÉDITO 4X", valor: 8.28 },
+            { nome: "CRÉDITO 5X", valor: 9.31 },
+            { nome: "CRÉDITO 6X", valor: 10.24, padrao: true } 
         ]
     };
+
+    // CHAVE FIXA PARA NÃO PERDER OS DADOS ANTIGOS DA AG DIESEL:
+    const LOCAL_DB_KEY = 'agDieselDB_Pro'; 
+
     // =========================================================================
     // ⚠️ DO PONTO ABAIXO EM DIANTE O CÓDIGO É UNIVERSAL E NUNCA MUDA ⚠️
     // =========================================================================
 
-    const LOCAL_DB_KEY = 'db_' + CONFIG.appID;
     let ultimaOSGerada = null;
 
     document.addEventListener('input', e => {
@@ -514,7 +516,6 @@
     let pecasTmp = [];
     const formatarBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    // Injeção Automática das Configurações
     window.onload = function() {
         document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
         document.getElementById('uiTituloPainel').innerText = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
@@ -1030,7 +1031,7 @@
         let link = document.createElement("a");
         let url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", `Relatorio_${tipo}.csv`);
+        link.setAttribute("download", `AG_Diesel_Relatorio_${tipo}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -1090,9 +1091,6 @@
         window.open(link, '_blank');
     }
 
-    // =========================================================
-    // MÓDULO DE BACKUP E RESTAURAÇÃO DE DADOS
-    // =========================================================
     function exportarBackup() {
         const dataStr = localStorage.getItem(LOCAL_DB_KEY);
         if(!dataStr || dataStr.length < 50) return alert("Nenhum dado encontrado para gerar backup.");
@@ -1103,7 +1101,7 @@
         
         const dataFormatada = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
         a.href = url;
-        a.download = `Backup_${CONFIG.appID}_${dataFormatada}.json`;
+        a.download = `Backup_AG_DIESEL_${dataFormatada}.json`;
         
         document.body.appendChild(a);
         a.click();
@@ -1120,7 +1118,6 @@
             try {
                 const data = JSON.parse(e.target.result);
                 
-                // Validação básica se é realmente um arquivo do nosso sistema
                 if(data && typeof data === 'object' && Array.isArray(data.vendas)) { 
                     if(confirm("ATENÇÃO: Restaurar o backup apagará os dados atuais do navegador que não estiverem neste arquivo. Tem certeza?")) {
                         localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(data));
@@ -1135,8 +1132,6 @@
             }
         };
         reader.readAsText(file);
-        
-        // Reseta o input para caso ele queira subir o mesmo arquivo de novo
         event.target.value = ''; 
     }
 
