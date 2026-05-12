@@ -56,7 +56,7 @@
         .badge-warning { background: #ffcc00; color: #000; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .badge-ok { background: #4caf50; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
-        /* JANELA FLUTUANTE DE IMPRESSÃO */
+        /* JANELAS FLUTUANTES (MODAIS) */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: flex-start;
@@ -144,7 +144,7 @@
         <div class="panel-flex">
             
             <div class="panel-col panel" style="max-width: 480px;">
-                <h2 id="uiTituloPainel">AG Diesel - Módulo de OS</h2>
+                <h2 id="uiTituloPainel">Módulo de OS</h2>
                 
                 <div class="input-group" style="background: #331414; border-color: #ff4d4d;">
                     <h3 style="color: #ff4d4d;">Tipo de Documento</h3>
@@ -158,12 +158,12 @@
                     <h3>Veículo e Cliente <span id="avisoEncontrado" class="badge-success">✔ Carregado</span></h3>
                     <div class="row-inputs">
                         <div style="flex: 2;"><label>CLIENTE:</label><input type="text" id="nomeCliente" list="lista-clientes-nomes" oninput="buscarClientePorNome()"></div>
-                        <div style="flex: 1;"><label>TELEFONE:</label><input type="text" id="telCliente" onblur="buscarClienteDb()"></div>
+                        <div style="flex: 1;"><label>TELEFONE:</label><input type="text" id="telCliente" onblur="buscarClienteDb('telefone')"></div>
                     </div>
                     <div class="row-inputs">
                         <div style="flex: 1;"><label>MARCA:</label><input type="text" id="marca" list="lista-marcas" oninput="atualizarModelos()"></div>
                         <div style="flex: 1;"><label>MODELO:</label><input type="text" id="modelo" list="lista-modelos"></div>
-                        <div style="flex: 1;"><label>PLACA:</label><input type="text" id="placa" onblur="buscarClienteDb()"></div>
+                        <div style="flex: 1;"><label>PLACA:</label><input type="text" id="placa" onblur="buscarClienteDb('placa')"></div>
                     </div>
                     <div class="row-inputs">
                         <div style="flex: 1;"><label>ANO:</label><input type="text" id="ano"></div>
@@ -351,16 +351,16 @@
 
     <div id="aba-clientes" class="tab-content">
         <div class="panel">
-            <h2>Sua Carteira de Clientes</h2>
-            <p style="color:#aaa; font-size:12px; margin-top:-5px;">Use esta tela para lembrar os clientes de voltarem para uma revisão.</p>
+            <h2>Cadastro de Clientes e CRM</h2>
+            <p style="color:#aaa; font-size:12px; margin-top:-5px;">Gerencie o cadastro dos veículos ou acione os clientes no WhatsApp.</p>
             <table class="table-dark">
                 <thead>
                     <tr>
                         <th>NOME DO CLIENTE</th>
                         <th>TELEFONE</th>
-                        <th>VEÍCULO(S) ATENDIDO(S)</th>
+                        <th>VEÍCULO ATENDIDO</th>
                         <th>ÚLTIMA VISITA</th>
-                        <th>MARKETING AUTOMÁTICO</th>
+                        <th>AÇÕES E MARKETING</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaClientesBody"></tbody>
@@ -445,6 +445,53 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="modalEditarCliente">
+    <div class="modal-content" style="max-width: 500px; background: #2b2b36; border: 1px solid #3f3f4e;">
+        <div class="modal-toolbar" style="border-bottom: 3px solid #007bff; background: #1e1e24;">
+            <h3 style="margin:0; color:white;">✏️ Editar Cadastro do Veículo</h3>
+            <button class="btn-close-modal" onclick="fecharEditarCliente()">X</button>
+        </div>
+        <div style="padding: 25px; color: #fff;">
+            <input type="hidden" id="editPlacaAntiga">
+            
+            <label style="color:#aaa;">NOME DO CLIENTE:</label>
+            <input type="text" id="editNome" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+            
+            <label style="color:#aaa;">TELEFONE:</label>
+            <input type="text" id="editTel" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+            
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label style="color:#aaa;">MARCA:</label>
+                    <input type="text" id="editMarca" list="lista-marcas" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+                </div>
+                <div style="flex:1;">
+                    <label style="color:#aaa;">MODELO:</label>
+                    <input type="text" id="editModelo" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label style="color:#aaa;">ANO:</label>
+                    <input type="text" id="editAno" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+                </div>
+                <div style="flex:1;">
+                    <label style="color:#aaa;">COR:</label>
+                    <input type="text" id="editCor" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+                </div>
+                <div style="flex:1;">
+                    <label style="color:#ff4d4d;">PLACA:</label>
+                    <input type="text" id="editPlaca" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#ff4d4d; font-weight:bold; border:1px solid #ff4d4d; border-radius:4px;">
+                </div>
+            </div>
+
+            <button class="btn-sync" style="background:#007bff; width:100%; padding:15px; font-weight:bold; color:white; border:none; border-radius:4px; margin-top:10px;" onclick="salvarClienteEditado()">💾 SALVAR ALTERAÇÕES</button>
+        </div>
+    </div>
+</div>
+
+
 <script>
     // =========================================================================
     // ⚙️ DADOS FIXOS DA AG DIESEL 
@@ -458,7 +505,6 @@
             telefone: "(85) 99419-0644",
             logo: "logo.png" 
         },
-        
         sistema: {
             tituloApp: "Gestão Pro",
             linkPlanilha: "https://script.google.com/macros/s/AKfycbw7UDUx2m0YQKrdMXuCZdcDj7AIOW9mjX0p1Gl4wh2rcAcqHNLEbXdGik2zqTGA5maj/exec",
@@ -466,9 +512,7 @@
             margemExtraPadrao: 1.25, 
             custoPecaPadrao: 0.75 
         },
-
         equipe: ["VICTOR", "JEAN", "PAULO", "ISLAN", "LOURO", "PAJÉ"],
-
         taxas: [
             { nome: "DINHEIRO / PIX", valor: 0.00 },
             { nome: "DÉBITO", valor: 1.52 },
@@ -559,12 +603,7 @@
         document.getElementById('previewModal').style.display = 'none';
     }
 
-    // =========================================================
-    // INJEÇÃO DA IMPRESSÃO TÉRMICA (80mm)
-    // =========================================================
-    function imprimirA4() {
-        window.print();
-    }
+    function imprimirA4() { window.print(); }
 
     function imprimirCupom() {
         const style = document.createElement('style');
@@ -586,27 +625,18 @@
                 #documentoOS table { width: 100%; font-size: 10px !important; margin-bottom: 5px; }
                 #documentoOS th, #documentoOS td { padding: 2px 0; border: none; border-bottom: 1px dashed #ccc; }
                 #documentoOS th { background: none !important; color: #000; font-weight: bold; border-bottom: 1px solid #000; }
-                
-                /* Oculta colunas menos importantes no cupom para não quebrar a linha */
                 #docTabelaItens th:nth-child(3), #docTabelaItens td:nth-child(3) { display: none; }
-                
                 .totals-container { border-top: 1px dashed #000; padding-top: 5px; width: 100%; align-items: stretch !important; }
                 .totals-row { width: 100% !important; justify-content: space-between; font-size: 11px; }
                 .total-bold { font-size: 14px !important; font-weight: bold; border:none !important; }
-                
                 .signatures { flex-direction: column; margin-top: 20px; gap: 20px; }
                 .sig-box { width: 100% !important; border-top: 1px dashed #000; padding-top: 2px; }
             }
         `;
         document.head.appendChild(style);
-        
         window.print();
-        
-        setTimeout(() => {
-            document.head.removeChild(style);
-        }, 1000);
+        setTimeout(() => { document.head.removeChild(style); }, 1000);
     }
-    // =========================================================
 
     function limparTelaOS() {
         if(confirm("Deseja limpar os dados da tela para iniciar um novo atendimento?")) {
@@ -629,6 +659,22 @@
             document.getElementById('acoesPosGeracao').style.display = 'none';
             document.getElementById('nomeCliente').focus();
         }
+    }
+
+    const bancoCarros = {
+        "VOLKSWAGEN": ["GOL", "FOX", "POLO", "SAVEIRO", "AMAROK", "JETTA", "VOYAGE", "NIVUS"],
+        "FIAT": ["STRADA", "TORO", "UNO", "PALIO", "ARGO", "MOBI", "FASTBACK", "PULSE"],
+        "CHEVROLET": ["ONIX", "S10", "PRISMA", "TRACKER", "SPIN", "COBALT"],
+        "TOYOTA": ["COROLLA", "HILUX", "YARIS", "SW4"],
+        "HYUNDAI": ["HB20", "HB20S", "HB20X", "CRETA"],
+        "HONDA": ["CIVIC", "CITY", "HR-V", "FIT", "CR-V", "WR-V"]
+    };
+
+    function atualizarModelos() {
+        const marca = document.getElementById('marca').value;
+        const lista = document.getElementById('lista-modelos');
+        lista.innerHTML = '';
+        if(bancoCarros[marca]) bancoCarros[marca].forEach(m => lista.appendChild(new Option(m)));
     }
 
     function atualizarListaNomesCadastrados() {
@@ -655,39 +701,39 @@
                 ['telCliente','marca','modelo','cor','ano','placa'].forEach(id => {
                     if(document.getElementById(id).value === '') document.getElementById(id).value = c[id] || '';
                 });
-                document.getElementById('avisoEncontrado').style.display = 'inline';
-                setTimeout(() => document.getElementById('avisoEncontrado').style.display = 'none', 3000);
+                mostrarAvisoEncontrado();
             }
         }
     }
 
-    const bancoCarros = {
-        "VOLKSWAGEN": ["GOL", "FOX", "POLO", "SAVEIRO", "AMAROK", "JETTA", "VOYAGE", "NIVUS"],
-        "FIAT": ["STRADA", "TORO", "UNO", "PALIO", "ARGO", "MOBI", "FASTBACK", "PULSE"],
-        "CHEVROLET": ["ONIX", "S10", "PRISMA", "TRACKER", "SPIN", "COBALT"],
-        "TOYOTA": ["COROLLA", "HILUX", "YARIS", "SW4"],
-        "HYUNDAI": ["HB20", "HB20S", "HB20X", "CRETA"],
-        "HONDA": ["CIVIC", "CITY", "HR-V", "FIT", "CR-V", "WR-V"]
-    };
-
-    function atualizarModelos() {
-        const marca = document.getElementById('marca').value;
-        const lista = document.getElementById('lista-modelos');
-        lista.innerHTML = '';
-        if(bancoCarros[marca]) bancoCarros[marca].forEach(m => lista.appendChild(new Option(m)));
-    }
-
-    function buscarClienteDb() {
+    function buscarClienteDb(origemBusca) {
         const placa = document.getElementById('placa').value.replace(/[^A-Z0-9]/g, '');
         const tel = document.getElementById('telCliente').value.replace(/\D/g, '');
-        let c = db.clientes[placa] || Object.values(db.clientes).find(cl => cl.tel === tel);
-        if(c) {
-            ['nomeCliente','telCliente','marca','modelo','cor','ano','placa'].forEach(id => {
-                if(document.getElementById(id).value === '') document.getElementById(id).value = c[id];
-            });
-            document.getElementById('avisoEncontrado').style.display = 'inline';
-            setTimeout(() => document.getElementById('avisoEncontrado').style.display = 'none', 3000);
+        
+        let c = null;
+
+        if (origemBusca === 'telefone' && tel) {
+            c = Object.values(db.clientes).find(cl => cl.tel === tel);
+            if(c) {
+                ['nomeCliente','telCliente','marca','modelo','cor','ano','placa'].forEach(id => {
+                    if(document.getElementById(id).value === '') document.getElementById(id).value = c[id] || '';
+                });
+                mostrarAvisoEncontrado();
+            }
+        } else if (origemBusca === 'placa' && placa) {
+            c = db.clientes[placa];
+            if(c) {
+                ['nomeCliente','telCliente','marca','modelo','cor','ano','placa'].forEach(id => {
+                    document.getElementById(id).value = c[id] || '';
+                });
+                mostrarAvisoEncontrado();
+            }
         }
+    }
+
+    function mostrarAvisoEncontrado() {
+        document.getElementById('avisoEncontrado').style.display = 'inline';
+        setTimeout(() => document.getElementById('avisoEncontrado').style.display = 'none', 3000);
     }
 
     function adicionarPeca() {
@@ -800,7 +846,11 @@
 
         db.vendas.push(osData);
         db.proximaOS++; 
-        db.clientes[placaLimpa.replace('-','')] = { nome: osData.cliente, tel: osData.tel, marca: osData.marca, modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa };
+        
+        db.clientes[placaLimpa.replace('-','')] = { 
+            nome: osData.cliente, tel: osData.tel, marca: osData.marca, 
+            modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa 
+        };
         localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
 
         ultimaOSGerada = osData; 
@@ -1125,37 +1175,97 @@
 
     function atualizarAbaClientes() {
         let html = '';
-        let clientesMap = {};
-        
-        db.vendas.forEach(v => {
-            if(v.status === 'ORÇAMENTO') return; 
-            if(!clientesMap[v.tel]) {
-                clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp };
-            }
-            clientesMap[v.tel].veiculos.add(`${v.marca} ${v.modelo} (${v.placa})`);
-            if(v.timestamp > clientesMap[v.tel].ultimaData) {
-                clientesMap[v.tel].ultimaData = v.timestamp;
-            }
-        });
-
         let agora = Date.now();
-        Object.keys(clientesMap).forEach(tel => {
-            let c = clientesMap[tel];
-            let dias = Math.floor((agora - c.ultimaData) / (1000 * 60 * 60 * 24));
-            let dataUltimaStr = new Date(c.ultimaData).toLocaleDateString('pt-BR');
-            let veiculosStr = Array.from(c.veiculos).join(', ');
+
+        Object.keys(db.clientes).forEach(placaKey => {
+            let c = db.clientes[placaKey];
             
-            let badgeDias = dias > 180 ? `<span class="badge-warning">Falta ha ${dias} dias</span>` : `<span class="badge-ok">Veio ha ${dias} dias</span>`;
+            let ultimaData = 0;
+            db.vendas.forEach(v => {
+                if (v.placa.replace('-','') === placaKey && v.timestamp > ultimaData) {
+                    ultimaData = v.timestamp;
+                }
+            });
+            
+            let dataUltimaStr = ultimaData > 0 ? new Date(ultimaData).toLocaleDateString('pt-BR') : 'Sem registro';
+            let dias = ultimaData > 0 ? Math.floor((agora - ultimaData) / (1000 * 60 * 60 * 24)) : 0;
+            
+            let badgeDias = '';
+            if(ultimaData > 0) {
+                badgeDias = dias > 180 ? `<span class="badge-warning">Falta ha ${dias} dias</span>` : `<span class="badge-ok">Veio ha ${dias} dias</span>`;
+            }
 
             html += `<tr style="border-bottom: 1px solid #333;">
                 <td style="padding: 10px;">${c.nome}</td>
-                <td>${tel}</td>
-                <td>${veiculosStr}</td>
+                <td>${c.tel}</td>
+                <td>${c.marca || ''} ${c.modelo || ''} (${c.placa || placaKey})</td>
                 <td>${dataUltimaStr}<br>${badgeDias}</td>
-                <td><button class="btn-small" style="background:#25D366; padding: 8px;" onclick="zapMarketing('${tel}', '${c.nome}', ${dias})">📱 MARKETING</button></td>
+                <td>
+                    <button class="btn-small" style="background:#007bff; padding: 8px; margin-right:5px;" onclick="abrirEditarCliente('${placaKey}')">✏️ EDITAR</button>
+                    <button class="btn-small" style="background:#dc3545; padding: 8px; margin-right:5px;" onclick="excluirCliente('${placaKey}')">🗑️ EXCLUIR</button>
+                    <button class="btn-small" style="background:#25D366; padding: 8px;" onclick="zapMarketing('${c.tel}', '${c.nome}', ${dias})">📱 MARKETING</button>
+                </td>
             </tr>`;
         });
         document.getElementById('tabelaClientesBody').innerHTML = html;
+    }
+
+    function abrirEditarCliente(placaKey) {
+        let c = db.clientes[placaKey];
+        if(!c) return;
+        document.getElementById('editPlacaAntiga').value = placaKey;
+        document.getElementById('editNome').value = c.nome || '';
+        document.getElementById('editTel').value = c.tel || '';
+        document.getElementById('editMarca').value = c.marca || '';
+        document.getElementById('editModelo').value = c.modelo || '';
+        document.getElementById('editAno').value = c.ano || '';
+        document.getElementById('editCor').value = c.cor || '';
+        document.getElementById('editPlaca').value = c.placa || '';
+        
+        document.getElementById('modalEditarCliente').style.display = 'flex';
+    }
+    
+    function fecharEditarCliente() {
+        document.getElementById('modalEditarCliente').style.display = 'none';
+    }
+
+    function salvarClienteEditado() {
+        let placaAntiga = document.getElementById('editPlacaAntiga').value;
+        let novaPlacaFormatada = document.getElementById('editPlaca').value.toUpperCase();
+        let novaPlacaKey = novaPlacaFormatada.replace(/[^A-Z0-9]/g, '');
+
+        if(!novaPlacaKey) return alert("A placa nao pode ficar vazia.");
+
+        let c = {
+            nome: document.getElementById('editNome').value.toUpperCase(),
+            tel: document.getElementById('editTel').value,
+            marca: document.getElementById('editMarca').value.toUpperCase(),
+            modelo: document.getElementById('editModelo').value.toUpperCase(),
+            ano: document.getElementById('editAno').value.toUpperCase(),
+            cor: document.getElementById('editCor').value.toUpperCase(),
+            placa: novaPlacaFormatada
+        };
+
+        if(placaAntiga !== novaPlacaKey) {
+            delete db.clientes[placaAntiga];
+        }
+        
+        db.clientes[novaPlacaKey] = c;
+        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+
+        atualizarAbaClientes();
+        atualizarListaNomesCadastrados();
+        fecharEditarCliente();
+        alert("Cadastro atualizado com sucesso!");
+    }
+
+    function excluirCliente(placaKey) {
+        if(confirm("Tem certeza que deseja apagar o cadastro rápido deste veículo? As Ordens de Serviço antigas ligadas a ele NÃO serão apagadas e continuarão no seu histórico financeiro.")) {
+            delete db.clientes[placaKey];
+            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+            atualizarAbaClientes();
+            atualizarListaNomesCadastrados();
+        }
     }
 
     function zapMarketing(telefone, nome, dias) {
