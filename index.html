@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AG Diesel - Gestão Pro</title>
     <style>
-        /* ================= TEMA ESCURO (SISTEMA) ================= */
+        /* ================= TEMA ESCURO E ESTRUTURA ================= */
         body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px; background-color: #1a1a1d; margin: 0; color: #e0e0e0; }
-        .container { max-width: 1200px; margin: auto; }
+        .container { max-width: 1400px; margin: auto; }
         
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #333; overflow-x: auto; white-space: nowrap; }
         .tab-btn { background: #2b2b36; border: none; padding: 12px 20px; color: #aaa; cursor: pointer; border-radius: 8px 8px 0 0; font-weight: bold; transition: 0.3s; font-size: 13px; }
@@ -22,7 +22,7 @@
         h2 { color: #ff4d4d; margin-top: 0; font-size: 1.4em; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; }
         h3 { color: #b3b3b3; font-size: 1.1em; margin-bottom: 10px; }
         label { display: block; margin-top: 10px; font-weight: 600; font-size: 12px; color: #aaa; }
-        input, select { width: 100%; padding: 10px; margin-top: 4px; border-radius: 4px; border: 1px solid #4a4a5a; background: #1e1e24; color: #fff; font-size: 13px; box-sizing: border-box; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 4px; border-radius: 4px; border: 1px solid #4a4a5a; background: #1e1e24; color: #fff; font-size: 13px; box-sizing: border-box; text-transform: uppercase; }
         
         .row-inputs { display: flex; gap: 10px; align-items: flex-end; }
         .input-group { background: #23232c; padding: 15px; border-radius: 4px; border: 1px solid #3f3f4e; margin-bottom: 15px; }
@@ -33,16 +33,26 @@
         .btn-small { background: #4caf50; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px;}
         .btn-sync { background: #007bff; color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 14px;}
         .btn-sync:hover { background: #0056b3; }
+        .btn-remove { background: #dc3545; color: white; border: none; border-radius: 3px; padding: 6px 10px; cursor: pointer; font-size: 11px; font-weight: bold;}
         
         .lista-itens { margin-top: 15px; max-height: 150px; overflow-y: auto; font-size: 13px; border: 1px dashed #4a4a5a; padding: 10px; background: #1e1e24; border-radius: 4px; }
         .item-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 6px 0; align-items: center; }
-        .btn-remove { background: #dc3545; color: white; border: none; border-radius: 3px; padding: 6px 10px; cursor: pointer; font-size: 11px; font-weight: bold;}
         
         .checkbox-container { display: flex; align-items: center; margin-top: 10px; background: #23232c; padding: 10px; border: 1px solid #4a4a5a; border-radius: 4px; }
         .checkbox-container input { width: auto; margin-right: 10px; transform: scale(1.2); }
         .checkbox-container label { margin: 0; color: #ccc; cursor: pointer; }
 
-        /* TABELAS E CARDS */
+        /* KANBAN ESTILO TRELLO */
+        .kanban-board { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 20px; align-items: flex-start; }
+        .kanban-col { background: #1e1e24; min-width: 280px; max-width: 280px; border-radius: 8px; border-top: 4px solid #444; }
+        .kanban-col h3 { padding: 15px; margin: 0; background: #23232c; font-size: 12px; border-radius: 8px 8px 0 0; text-align: center; }
+        .kanban-list { padding: 10px; min-height: 100px; }
+        .kanban-card { background: #2b2b36; border: 1px solid #3f3f4e; padding: 12px; border-radius: 6px; margin-bottom: 10px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .kanban-card h4 { margin: 0 0 5px 0; font-size: 13px; color: #fff; }
+        .kanban-card p { margin: 0; font-size: 11px; color: #aaa; }
+        .kanban-card .card-footer { display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid #333; padding-top: 8px; }
+        
+        /* DASHBOARD CARDS */
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .card { background: #23232c; padding: 20px; border-radius: 8px; border-left: 5px solid #cc0000; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .card h4 { margin: 0; font-size: 12px; color: #aaa; text-transform: uppercase; }
@@ -57,47 +67,30 @@
         .badge-ok { background: #4caf50; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
         /* JANELAS FLUTUANTES (MODAIS) */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: flex-start;
-            overflow-y: auto; padding: 30px 10px; box-sizing: border-box;
-        }
-        .modal-content {
-            background: #fff; width: 100%; max-width: 800px; margin: auto; border-radius: 4px;
-            position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
-        .modal-toolbar {
-            background: #2b2b36; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            border-radius: 4px 4px 0 0; border-bottom: 3px solid #cc0000;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 30px 10px; box-sizing: border-box; }
+        .modal-content { background: #fff; width: 100%; max-width: 800px; margin: auto; border-radius: 4px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .modal-toolbar { background: #2b2b36; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 4px 4px 0 0; border-bottom: 3px solid #cc0000; }
         .btn-close-modal { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px;}
         .btn-close-modal:hover { background: #c82333; }
 
         /* ESTILO DO DOCUMENTO OS PADRÃO (A4) */
-        #documentoOS {
-            background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px;
-        }
+        #documentoOS { background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px; }
         #documentoOS .os-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         #documentoOS .os-header img { max-width: 120px; max-height: 70px; }
         #documentoOS .os-company { flex: 1; margin-left: 20px; color: black; }
         #documentoOS .os-company h1 { font-size: 16px; margin: 0; }
         #documentoOS .os-company p { font-size: 10px; margin: 2px 0; }
         #documentoOS .os-contact { text-align: right; font-size: 10px; color: black; }
-
         #documentoOS .os-bar { background-color: #8c8c8c !important; color: white !important; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; margin: 15px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        
         #documentoOS .section-title { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; margin: 15px 0 5px 0; padding-bottom: 2px; text-transform: uppercase; color: black; }
-        
         #documentoOS table { width: 100%; border-collapse: collapse; margin-bottom: 10px; color: black; }
         #documentoOS th { background-color: #e6e6e6 !important; padding: 5px; font-size: 10px; text-align: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
         #documentoOS td { padding: 5px; border: 1px solid #eee; font-size: 10px; }
-        
         #documentoOS .text-right { text-align: right; }
         #documentoOS .text-center { text-align: center; }
         #documentoOS .totals-container { display: flex; flex-direction: column; align-items: flex-end; margin-top: 10px; color: black; }
         #documentoOS .totals-row { display: flex; justify-content: space-between; width: 200px; font-size: 11px; padding: 2px 0; }
         #documentoOS .total-bold { font-weight: bold; font-size: 13px; border-top: 1px solid #000; margin-top: 5px; padding-top: 5px; }
-
         #documentoOS .signatures { display: flex; justify-content: space-between; margin-top: 60px; text-align: center; font-size: 10px; color: black; }
         #documentoOS .sig-box { width: 40%; border-top: 1px solid #000; padding-top: 5px; }
 
@@ -133,8 +126,9 @@
 <div class="container no-print">
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('aba-os')">NOVA ORDEM DE SERVIÇO</button>
-        <button class="tab-btn" onclick="openTab('aba-historico')">HISTÓRICO / PÁTIO</button>
-        <button class="tab-btn" onclick="openTab('aba-financeiro')">🔒 FINANCEIRO</button>
+        <button class="tab-btn" onclick="openTab('aba-historico')">PÁTIO KANBAN</button>
+        <button class="tab-btn" onclick="openTab('aba-agenda')">📅 AGENDA</button>
+        <button class="tab-btn" onclick="openTab('aba-financeiro')">🔒 FINANCEIRO (DRE)</button>
         <button class="tab-btn" onclick="openTab('aba-faturamento-pecas')">🔒 RELATÓRIO PEÇAS</button>
         <button class="tab-btn" style="background:#007bff; color:white;" onclick="openTab('aba-clientes')">👥 CLIENTES</button>
         <button class="tab-btn" style="background:#4a4a5a; color:white;" onclick="openTab('aba-backup')">🔒 BACKUP</button>
@@ -231,30 +225,44 @@
 
     <div id="aba-historico" class="tab-content">
         <div class="panel">
-            <h2>Gestão de Pátio e Prontuário</h2>
-            <div class="row-inputs" style="max-width: 400px; margin-bottom: 20px;">
-                <input type="text" id="buscaPlaca" placeholder="DIGITE A PLACA">
-                <button class="btn-add" style="margin:0; height:37px;" onclick="filtrarHistorico()">BUSCAR</button>
+            <h2>Pátio Digital (Gestão de Fluxo)</h2>
+            <div class="kanban-board">
+                <div class="kanban-col" style="border-top-color: #ff9800;"><h3>ORÇAMENTOS</h3><div class="kanban-list" id="kb-orcamento"></div></div>
+                <div class="kanban-col" style="border-top-color: #007bff;"><h3>AGUARDANDO PEÇAS</h3><div class="kanban-list" id="kb-pecas"></div></div>
+                <div class="kanban-col" style="border-top-color: #f44336;"><h3>EM SERVIÇO</h3><div class="kanban-list" id="kb-servico"></div></div>
+                <div class="kanban-col" style="border-top-color: #4caf50;"><h3>PRONTO / PÁTIO</h3><div class="kanban-list" id="kb-pronto"></div></div>
+                <div class="kanban-col" style="border-top-color: #607d8b;"><h3>ENTREGUES</h3><div class="kanban-list" id="kb-entregue"></div></div>
             </div>
-            <table class="table-dark" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="text-align: left; color: #ff4d4d; border-bottom: 2px solid #333;">
-                        <th style="padding: 10px;">DATA E GARANTIA</th><th>OS Nº</th><th>STATUS DA OS</th><th>PLACA</th><th>TOTAL</th><th>AÇÕES</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaHistorico"></tbody>
+        </div>
+    </div>
+
+    <div id="aba-agenda" class="tab-content">
+        <div class="panel">
+            <h2>📅 Agendamentos da Oficina</h2>
+            <div class="input-group" style="max-width: 600px;">
+                <div class="row-inputs">
+                    <div style="flex:2;"><label>CLIENTE:</label><input type="text" id="agNome"></div>
+                    <div style="flex:1;"><label>DATA:</label><input type="date" id="agData"></div>
+                    <div style="flex:1;"><label>HORA:</label><input type="time" id="agHora"></div>
+                </div>
+                <label>VEÍCULO / SERVIÇO:</label>
+                <input type="text" id="agCarro" placeholder="Ex: COROLLA - REVISÃO DE FREIOS">
+                <button class="btn-sync" onclick="salvarAgendamento()">➕ SALVAR NA AGENDA</button>
+            </div>
+            <table class="table-dark">
+                <thead><tr><th>DATA/HORA</th><th>CLIENTE</th><th>VEÍCULO/SERVIÇO</th><th>AÇÕES</th></tr></thead>
+                <tbody id="tabelaAgenda"></tbody>
             </table>
         </div>
     </div>
 
     <div id="aba-financeiro" class="tab-content">
         <div class="card-grid">
-            <div class="card"><h4>Faturamento Bruto (Apenas OS)</h4><p id="dashFaturamento">R$ 0,00</p></div>
-            <div class="card" style="border-left-color: #ff4d4d;"><h4>Taxas Bancárias</h4><p id="dashTaxas">R$ 0,00</p></div>
-            <div class="card" style="border-left-color: #4da6ff;"><h4>Reserva Retida</h4><p id="dashReservas">R$ 0,00</p></div>
-            <div class="card" style="border-left-color: #4caf50;"><h4>Lucro Real Global</h4><p id="dashLucro">R$ 0,00</p></div>
+            <div class="card"><h4>Faturamento Bruto</h4><p id="dreFaturamento">R$ 0,00</p></div>
+            <div class="card" style="border-left-color:#f44336"><h4>Custo Peças</h4><p id="dreCustoPecas">R$ 0,00</p></div>
+            <div class="card" style="border-left-color:#ff9800"><h4>Comissões (40%)</h4><p id="dreComissao">R$ 0,00</p></div>
+            <div class="card" style="border-left-color:#4caf50"><h4>Lucro Real Oficina</h4><p id="dreLucro">R$ 0,00</p></div>
         </div>
-        
         <div class="panel-flex">
             <div class="panel-col panel">
                 <div style="display:flex; justify-content: space-between; align-items: center;">
@@ -262,49 +270,26 @@
                     <button class="btn-small" style="background:#007bff; margin-bottom:10px;" onclick="exportarCSV('financeiro')">⬇️ EXPORTAR EXCEL</button>
                 </div>
                 <table class="table-dark">
-                    <thead>
-                        <tr><th>DATA</th><th>OS Nº</th><th>PLACA</th><th>VALOR MÁQUINA</th><th>LUCRO LÍQUIDO</th><th>AÇÃO</th></tr>
-                    </thead>
-                    <tbody id="tabelaVendas"></tbody>
+                    <thead><tr><th>DATA</th><th>OS</th><th>PLACA</th><th>BRUTO</th><th>TAXAS</th><th>LUCRO</th><th>AÇÕES</th></tr></thead>
+                    <tbody id="tabelaDRE"></tbody>
                 </table>
             </div>
 
             <div class="panel-col panel" style="max-width: 550px; background: #23232c;">
                 <h2 style="color: #4da6ff;">Controle de M.O (Nuvem)</h2>
-                <p style="font-size: 11px; color:#aaa; margin-top:-5px;">Orçamentos não aparecem aqui.</p>
-
                 <div class="row-inputs" style="margin-bottom: 15px; background: #1e1e24; padding: 10px; border-radius: 6px; border: 1px solid #3f3f4e; align-items: flex-end;">
-                    <div style="flex: 1;">
-                        <label style="margin-top:0; font-size: 10px;">DATA INÍCIO:</label>
-                        <input type="date" id="filtroInicioMO" style="padding: 8px; font-size: 12px; margin-top:2px; height: 35px;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="margin-top:0; font-size: 10px;">DATA FIM:</label>
-                        <input type="date" id="filtroFimMO" style="padding: 8px; font-size: 12px; margin-top:2px; height: 35px;">
-                    </div>
+                    <div style="flex: 1;"><label style="margin-top:0; font-size: 10px;">DATA INÍCIO:</label><input type="date" id="filtroInicioMO" style="padding: 8px; font-size: 12px; margin-top:2px; height: 35px;"></div>
+                    <div style="flex: 1;"><label style="margin-top:0; font-size: 10px;">DATA FIM:</label><input type="date" id="filtroFimMO" style="padding: 8px; font-size: 12px; margin-top:2px; height: 35px;"></div>
                     <button class="btn-small" style="height: 35px; margin-bottom: 0px; padding: 0 15px;" onclick="atualizarPainelMO()">🔍 FILTRAR</button>
                     <button class="btn-small" style="height: 35px; margin-bottom: 0px; background: #6c757d; padding: 0 10px;" onclick="limparFiltroMO()" title="Limpar Filtro">X</button>
                 </div>
-
                 <div style="display: flex; gap: 10px; margin-bottom: 15px; background: #1e1e24; padding: 10px; border-radius: 6px; border: 1px solid #3f3f4e;">
-                    <div style="flex: 1; text-align: center;">
-                        <span style="font-size: 10px; color: #aaa;">TOTAL M.O</span><br>
-                        <strong id="moTotal" style="color: #fff; font-size: 14px;">R$ 0,00</strong>
-                    </div>
-                    <div style="flex: 1; text-align: center; border-left: 1px solid #333;">
-                        <span style="font-size: 10px; color: #ffcc00;">COMISSÃO (40%)</span><br>
-                        <strong id="moMecanico" style="color: #ffcc00; font-size: 14px;">R$ 0,00</strong>
-                    </div>
-                    <div style="flex: 1; text-align: center; border-left: 1px solid #333;">
-                        <span style="font-size: 10px; color: #4caf50;">LUCRO OFICINA (60%)</span><br>
-                        <strong id="moOficina" style="color: #4caf50; font-size: 14px;">R$ 0,00</strong>
-                    </div>
+                    <div style="flex: 1; text-align: center;"><span style="font-size: 10px; color: #aaa;">TOTAL M.O</span><br><strong id="moTotal" style="color: #fff; font-size: 14px;">R$ 0,00</strong></div>
+                    <div style="flex: 1; text-align: center; border-left: 1px solid #333;"><span style="font-size: 10px; color: #ffcc00;">COMISSÃO (40%)</span><br><strong id="moMecanico" style="color: #ffcc00; font-size: 14px;">R$ 0,00</strong></div>
+                    <div style="flex: 1; text-align: center; border-left: 1px solid #333;"><span style="font-size: 10px; color: #4caf50;">LUCRO OFICINA (60%)</span><br><strong id="moOficina" style="color: #4caf50; font-size: 14px;">R$ 0,00</strong></div>
                 </div>
-
                 <table class="table-dark">
-                    <thead>
-                        <tr><th>MECÂNICO</th><th>PLACA</th><th>M.O TOTAL</th><th>COMISSÃO (40%)</th><th>STATUS</th></tr>
-                    </thead>
+                    <thead><tr><th>MECÂNICO</th><th>PLACA</th><th>M.O TOTAL</th><th>COMISSÃO (40%)</th><th>STATUS</th></tr></thead>
                     <tbody id="tabelaMecanicos"></tbody>
                 </table>
                 <button class="btn-sync" onclick="sincronizarPlanilha()">☁️ ENVIAR PENDENTES PARA A PLANILHA</button>
@@ -314,36 +299,17 @@
 
     <div id="aba-faturamento-pecas" class="tab-content">
         <div class="card-grid">
-            <div class="card" style="border-left-color: #ff4d4d;">
-                <h4>Investimento (Custo das Peças)</h4>
-                <p id="pecasCustoTotal">R$ 0,00</p>
-            </div>
-            <div class="card" style="border-left-color: #4da6ff;">
-                <h4>Faturamento Bruto de Peças</h4>
-                <p id="pecasVendaTotal">R$ 0,00</p>
-            </div>
-            <div class="card" style="border-left-color: #4caf50;">
-                <h4>Lucro Real Exclusivo em Peças</h4>
-                <p id="pecasLucroTotal">R$ 0,00</p>
-            </div>
+            <div class="card" style="border-left-color: #ff4d4d;"><h4>Investimento (Custo das Peças)</h4><p id="pecasCustoTotal">R$ 0,00</p></div>
+            <div class="card" style="border-left-color: #4da6ff;"><h4>Faturamento Bruto de Peças</h4><p id="pecasVendaTotal">R$ 0,00</p></div>
+            <div class="card" style="border-left-color: #4caf50;"><h4>Lucro Real Exclusivo em Peças</h4><p id="pecasLucroTotal">R$ 0,00</p></div>
         </div>
-
         <div class="panel">
             <div style="display:flex; justify-content: space-between; align-items: center;">
                 <h2>Detalhamento por Venda (Apenas OS Efetivadas)</h2>
                 <button class="btn-small" style="background:#007bff; margin-bottom:10px;" onclick="exportarCSV('pecas')">⬇️ EXPORTAR EXCEL</button>
             </div>
             <table class="table-dark">
-                <thead>
-                    <tr>
-                        <th>DATA</th>
-                        <th>OS Nº</th>
-                        <th>ITENS VENDIDOS</th>
-                        <th>CUSTO PAGO</th>
-                        <th>VALOR VENDIDO</th>
-                        <th>LUCRO GERADO</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>DATA</th><th>OS Nº</th><th>ITENS VENDIDOS</th><th>CUSTO PAGO</th><th>VALOR VENDIDO</th><th>LUCRO GERADO</th></tr></thead>
                 <tbody id="tabelaDetalhamentoPecas"></tbody>
             </table>
         </div>
@@ -351,18 +317,15 @@
 
     <div id="aba-clientes" class="tab-content">
         <div class="panel">
-            <h2>Cadastro de Clientes e CRM</h2>
-            <p style="color:#aaa; font-size:12px; margin-top:-5px;">Gerencie o cadastro dos veículos ou acione os clientes no WhatsApp.</p>
+            <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; margin-bottom: 15px;">
+                <div>
+                    <h2 style="border-bottom:none; padding-bottom:0; margin-bottom:0;">Cadastro de Clientes e CRM</h2>
+                    <p style="color:#aaa; font-size:12px; margin-top:5px; margin-bottom:0;">Gerencie o cadastro dos veículos ou acione os clientes no WhatsApp.</p>
+                </div>
+                <button class="btn-small" style="background:#007bff; font-size: 13px; padding: 10px 20px;" onclick="abrirNovoCliente()">➕ NOVO CLIENTE</button>
+            </div>
             <table class="table-dark">
-                <thead>
-                    <tr>
-                        <th>NOME DO CLIENTE</th>
-                        <th>TELEFONE</th>
-                        <th>VEÍCULO ATENDIDO</th>
-                        <th>ÚLTIMA VISITA</th>
-                        <th>AÇÕES E MARKETING</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>NOME DO CLIENTE</th><th>TELEFONE</th><th>VEÍCULO ATENDIDO</th><th>ÚLTIMA VISITA</th><th>AÇÕES E MARKETING</th></tr></thead>
                 <tbody id="tabelaClientesBody"></tbody>
             </table>
         </div>
@@ -372,14 +335,12 @@
         <div class="panel">
             <h2>Segurança e Backup de Dados</h2>
             <p style="color:#aaa; font-size:13px; margin-top:-5px;">Proteja os dados da oficina salvando um backup no seu computador regularmente.</p>
-
             <div class="card-grid" style="margin-top: 20px;">
                 <div class="card" style="border-left-color: #007bff; background: #1e1e24;">
                     <h4 style="color: #007bff;">Exportar Dados Atuais</h4>
                     <p style="font-size:12px; font-weight:normal; margin-top:5px; color:#aaa;">Baixe um arquivo contendo todo o histórico de clientes, veículos e OS do sistema.</p>
                     <button class="btn-sync" style="margin-top:15px; width:100%;" onclick="exportarBackup()">💾 GERAR BACKUP DE SEGURANÇA</button>
                 </div>
-
                 <div class="card" style="border-left-color: #ffcc00; background: #1e1e24;">
                     <h4 style="color: #ffcc00;">Restaurar Sistema</h4>
                     <p style="font-size:12px; font-weight:normal; margin-top:5px; color:#aaa;">Se você trocou de computador ou limpou o navegador, carregue seu último arquivo aqui.</p>
@@ -412,31 +373,24 @@
                 </div>
                 <div class="os-contact"><p id="docData"></p></div>
             </div>
-
             <div class="os-bar"><span id="docTipoDoc">ORDEM DE SERVIÇO</span> Nº <span id="docNumOS"></span></div>
-
             <div class="section-title">Cliente</div>
             <p style="margin: 5px 0;"><strong id="docCliente"></strong> - Tel: <span id="docTel"></span></p>
-
             <div class="section-title">Veículo</div>
             <table>
                 <thead><tr><th>MARCA</th><th>MODELO</th><th>PLACA</th><th>ANO</th><th>COR</th><th>KM</th></tr></thead>
                 <tbody><tr><td id="docMarca"></td><td id="docModelo"></td><td id="docPlaca"></td><td id="docAno"></td><td id="docCor"></td><td id="docKm"></td></tr></tbody>
             </table>
-
             <div class="section-title">Serviços e Peças</div>
             <table id="docTabelaItens">
                 <thead><tr><th>DESCRIÇÃO</th><th class="text-center">QTD</th><th class="text-right">UNIT.</th><th class="text-right">TOTAL</th></tr></thead>
                 <tbody></tbody>
             </table>
-
             <div class="totals-container">
                 <div class="totals-row"><span>Subtotal:</span><span id="docSubtotal"></span></div>
                 <div class="totals-row total-bold"><span>TOTAL:</span><span id="docTotal"></span></div>
             </div>
-
             <p style="margin-top: 20px; font-size: 10px;"><strong id="docPag"></strong> | Garantia de servico / pecas de 90 dias.</p>
-
             <div class="signatures">
                 <div class="sig-box" id="docSigEmpresa">NOME DA EMPRESA</div>
                 <div class="sig-box" id="docSigCliente">CLIENTE</div>
@@ -448,52 +402,30 @@
 <div class="modal-overlay" id="modalEditarCliente">
     <div class="modal-content" style="max-width: 500px; background: #2b2b36; border: 1px solid #3f3f4e;">
         <div class="modal-toolbar" style="border-bottom: 3px solid #007bff; background: #1e1e24;">
-            <h3 style="margin:0; color:white;">✏️ Editar Cadastro do Veículo</h3>
+            <h3 id="tituloModalCliente" style="margin:0; color:white;">✏️ Editar Cadastro do Veículo</h3>
             <button class="btn-close-modal" onclick="fecharEditarCliente()">X</button>
         </div>
         <div style="padding: 25px; color: #fff;">
             <input type="hidden" id="editPlacaAntiga">
-            
-            <label style="color:#aaa;">NOME DO CLIENTE:</label>
-            <input type="text" id="editNome" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
-            
-            <label style="color:#aaa;">TELEFONE:</label>
-            <input type="text" id="editTel" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
-            
+            <label style="color:#aaa;">NOME DO CLIENTE:</label><input type="text" id="editNome" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
+            <label style="color:#aaa;">TELEFONE:</label><input type="text" id="editTel" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;">
-                    <label style="color:#aaa;">MARCA:</label>
-                    <input type="text" id="editMarca" list="lista-marcas" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
-                </div>
-                <div style="flex:1;">
-                    <label style="color:#aaa;">MODELO:</label>
-                    <input type="text" id="editModelo" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
-                </div>
+                <div style="flex:1;"><label style="color:#aaa;">MARCA:</label><input type="text" id="editMarca" list="lista-marcas" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;"></div>
+                <div style="flex:1;"><label style="color:#aaa;">MODELO:</label><input type="text" id="editModelo" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;"></div>
             </div>
-
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;">
-                    <label style="color:#aaa;">ANO:</label>
-                    <input type="text" id="editAno" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
-                </div>
-                <div style="flex:1;">
-                    <label style="color:#aaa;">COR:</label>
-                    <input type="text" id="editCor" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;">
-                </div>
-                <div style="flex:1;">
-                    <label style="color:#ff4d4d;">PLACA:</label>
-                    <input type="text" id="editPlaca" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#ff4d4d; font-weight:bold; border:1px solid #ff4d4d; border-radius:4px;">
-                </div>
+                <div style="flex:1;"><label style="color:#aaa;">ANO:</label><input type="text" id="editAno" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;"></div>
+                <div style="flex:1;"><label style="color:#aaa;">COR:</label><input type="text" id="editCor" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#fff; border:1px solid #4a4a5a; border-radius:4px;"></div>
+                <div style="flex:1;"><label style="color:#ff4d4d;">PLACA:</label><input type="text" id="editPlaca" style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e24; color:#ff4d4d; font-weight:bold; border:1px solid #ff4d4d; border-radius:4px;"></div>
             </div>
-
-            <button class="btn-sync" style="background:#007bff; width:100%; padding:15px; font-weight:bold; color:white; border:none; border-radius:4px; margin-top:10px;" onclick="salvarClienteEditado()">💾 SALVAR ALTERAÇÕES</button>
+            <button class="btn-sync" style="background:#007bff; width:100%; padding:15px; font-weight:bold; color:white; border:none; border-radius:4px; margin-top:10px;" onclick="salvarClienteEditado()">💾 SALVAR DADOS</button>
         </div>
     </div>
 </div>
 
 <script>
     // =========================================================================
-    // ⚙️ DADOS FIXOS DA AG DIESEL 
+    // ⚙️ CONFIGURAÇÃO AG DIESEL
     // =========================================================================
     const CONFIG = {
         empresa: {
@@ -510,7 +442,7 @@
             valorReserva: 50.00,
             margemExtraPadrao: 1.25, 
             custoPecaPadrao: 0.75,
-            senhaAdmin: "1234" // <--- SENHA DE ACESSO AO FINANCEIRO
+            senhaAdmin: "1234"
         },
         equipe: ["VICTOR", "JEAN", "PAULO", "ISLAN", "LOURO", "PAJÉ"],
         taxas: [
@@ -526,9 +458,15 @@
     };
 
     const LOCAL_DB_KEY = 'agDieselDB_Pro'; 
-
+    let db = JSON.parse(localStorage.getItem(LOCAL_DB_KEY)) || { clientes: {}, vendas: [], agenda: [], proximaOS: 1 };
+    if (!db.proximaOS) db.proximaOS = 1; 
+    if (!db.agenda) db.agenda = [];
+    
     let ultimaOSGerada = null;
     let adminLogado = false; 
+    let pecasTmp = [];
+    
+    const formatarBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     document.addEventListener('input', e => {
         if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
@@ -545,32 +483,14 @@
         return parseFloat(str) || 0;
     }
 
-    function limparOSAntigas(dbAtual) {
-        if (!dbAtual.vendas) dbAtual.vendas = []; 
-        const SEIS_MESES_EM_MS = 180 * 24 * 60 * 60 * 1000;
-        const agora = Date.now();
-        dbAtual.vendas = dbAtual.vendas.filter(v => (agora - v.timestamp) < SEIS_MESES_EM_MS);
-        return dbAtual;
-    }
-
-    let dbTemp = JSON.parse(localStorage.getItem(LOCAL_DB_KEY)) || { clientes: {}, vendas: [], proximaOS: 1 };
-    if (!dbTemp.proximaOS) dbTemp.proximaOS = 1; 
-    let db = limparOSAntigas(dbTemp);
-    localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-    
-    let pecasTmp = [];
-    const formatarBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
     window.onload = function() {
         document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
         document.getElementById('uiTituloPainel').innerText = CONFIG.empresa.nome + " - Módulo de OS";
-        
         document.getElementById('docNomeEmpresa').innerText = CONFIG.empresa.nome;
         document.getElementById('docCnpjEndereco').innerText = CONFIG.empresa.cnpj + " | " + CONFIG.empresa.endereco;
         document.getElementById('docCidadeTel').innerText = CONFIG.empresa.cidade + " | Tel.: " + CONFIG.empresa.telefone;
         document.getElementById('docSigEmpresa').innerText = CONFIG.empresa.nome;
         document.getElementById('logoEmpresa').src = CONFIG.empresa.logo;
-
         document.getElementById('uiLabelReserva').innerText = `DILUIR R$ ${CONFIG.sistema.valorReserva.toFixed(2).replace('.', ',')} DE RESERVA`;
         document.getElementById('uiLabelMargem').innerText = `ADICIONAR +${((CONFIG.sistema.margemExtraPadrao - 1) * 100).toFixed(0)}% DE MARGEM EXTRA`;
 
@@ -608,18 +528,15 @@
             }
         });
 
+        if(tabId === 'aba-historico') renderKanban();
+        if(tabId === 'aba-agenda') renderAgenda();
         if(tabId === 'aba-financeiro') atualizarDashboard();
         if(tabId === 'aba-faturamento-pecas') atualizarRelatorioPecas();
         if(tabId === 'aba-clientes') atualizarAbaClientes();
     }
 
-    function abrirPreview() {
-        document.getElementById('previewModal').style.display = 'flex';
-    }
-    function fecharPreview() {
-        document.getElementById('previewModal').style.display = 'none';
-    }
-
+    function abrirPreview() { document.getElementById('previewModal').style.display = 'flex'; }
+    function fecharPreview() { document.getElementById('previewModal').style.display = 'none'; }
     function imprimirA4() { window.print(); }
 
     function imprimirCupom() {
@@ -628,11 +545,7 @@
         style.innerHTML = `
             @media print {
                 @page { margin: 0; size: 80mm auto; }
-                #documentoOS { 
-                    width: 76mm !important; padding: 2mm !important; 
-                    font-family: 'Courier New', Courier, monospace !important; 
-                    font-size: 11px !important; color: #000;
-                }
+                #documentoOS { width: 76mm !important; padding: 2mm !important; font-family: 'Courier New', Courier, monospace !important; font-size: 11px !important; color: #000; }
                 #documentoOS .os-header { flex-direction: column; align-items: center; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; }
                 #documentoOS .os-header img { max-width: 60px; margin-bottom: 5px; }
                 #documentoOS .os-company { margin-left: 0; text-align: center; }
@@ -656,22 +569,12 @@
     }
 
     function limparTelaOS() {
-        if(confirm("Deseja limpar os dados da tela para iniciar um novo atendimento?")) {
-            document.getElementById('nomeCliente').value = '';
-            document.getElementById('telCliente').value = '';
-            document.getElementById('marca').value = '';
-            document.getElementById('modelo').value = '';
-            document.getElementById('placa').value = '';
-            document.getElementById('ano').value = '';
-            document.getElementById('cor').value = '';
-            document.getElementById('km').value = '';
-            document.getElementById('nomeMecanico').value = '';
-            document.getElementById('maoDeObra').value = '';
+        if(confirm("Deseja limpar os dados da tela?")) {
+            ['nomeCliente','telCliente','marca','modelo','placa','ano','cor','km','nomeMecanico','maoDeObra'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('repassarTaxa').checked = true;
             pecasTmp = [];
             ultimaOSGerada = null; 
             renderPecas();
-            
             document.getElementById('resumoFinanceiro').style.display = 'none';
             document.getElementById('acoesPosGeracao').style.display = 'none';
             document.getElementById('nomeCliente').focus();
@@ -709,7 +612,6 @@
     function buscarClientePorNome() {
         let inputVal = document.getElementById('nomeCliente').value;
         let match = inputVal.match(/\((.*?)\)/);
-        
         if(match) {
             let placaBuscada = match[1].replace('-', '');
             let c = db.clientes[placaBuscada];
@@ -726,7 +628,6 @@
     function buscarClienteDb(origemBusca) {
         const placa = document.getElementById('placa').value.replace(/[^A-Z0-9]/g, '');
         const tel = document.getElementById('telCliente').value.replace(/\D/g, '');
-        
         let c = null;
 
         if (origemBusca === 'telefone' && tel) {
@@ -758,9 +659,7 @@
         const qtd = parseInt(document.getElementById('qtdPeca').value) || 1;
         const preco = extrairNumeroDoTexto(document.getElementById('tabelaPeca').value);
         
-        if(!nome || preco <= 0) {
-            return alert("Por favor, digite o NOME da peca e um VALOR valido.");
-        }
+        if(!nome || preco <= 0) return alert("Digite NOME e VALOR da peça.");
 
         pecasTmp.push({ id: Date.now(), nome, qtd, tabelaUnit: preco, custoUnit: preco * CONFIG.sistema.custoPecaPadrao });
         renderPecas();
@@ -772,7 +671,7 @@
 
     function renderPecas() {
         const box = document.getElementById('listaPecasBox');
-        if(pecasTmp.length === 0) { box.innerHTML = '<em style="color:#666;">Nenhuma peca lancada.</em>'; return; }
+        if(pecasTmp.length === 0) { box.innerHTML = '<em style="color:#666;">Nenhuma peça lançada.</em>'; return; }
         box.innerHTML = pecasTmp.map((p, i) => `
             <div class="item-row">
                 <span>${p.qtd}x ${p.nome}</span>
@@ -803,23 +702,15 @@
             totalCustoBase += p.custoTotalBase;
         });
 
-        if((totalVendaBase + maoObra) === 0) return alert('O documento precisa ter pecas ou mao de obra.');
+        if((totalVendaBase + maoObra) === 0) return alert('O documento precisa ter peças ou mão de obra.');
 
         const valorBaseReal = totalVendaBase + maoObra;
         const totalComReserva = valorBaseReal + reserva;
         
-        let faturamentoFinal;
-        if (repassarTaxa) {
-            faturamentoFinal = totalComReserva / (1 - taxaPerc);
-        } else {
-            faturamentoFinal = totalComReserva;
-        }
-
+        let faturamentoFinal = repassarTaxa ? totalComReserva / (1 - taxaPerc) : totalComReserva;
         const valorDescontadoMaquina = faturamentoFinal * taxaPerc;
         const acrescimoRateio = faturamentoFinal - valorBaseReal; 
-
-        const dinheiroNaConta = faturamentoFinal - valorDescontadoMaquina;
-        const lucroReal = dinheiroNaConta - reserva - totalCustoBase;
+        const lucroReal = (faturamentoFinal - valorDescontadoMaquina) - reserva - totalCustoBase;
 
         let arrPecasFinal = [];
         let maoObraFinal = maoObra;
@@ -850,41 +741,32 @@
             ano: document.getElementById('ano').value, cor: document.getElementById('cor').value,
             placa: placaLimpa, km: document.getElementById('km').value,
             mecanico: nomeMecanico, maoObraOriginal: maoObra, maoObraFinal: maoObraFinal, pecasFinal: arrPecasFinal,
-            faturamento: faturamentoFinal,
-            custoTotalPecas: totalCustoBase,
-            vendaTotalPecas: totalVendaBase,
+            faturamento: faturamentoFinal, custoTotalPecas: totalCustoBase, vendaTotalPecas: totalVendaBase,
             condPag: taxaPerc > 0 ? `*PAGAMENTO VIA ${nomePagamento}` : '',
             itensResumo: pecasTmp.map(p => p.nome).join(', '),
-            taxaMaq: valorDescontadoMaquina, 
-            reserva: reserva, 
-            lucro: lucroReal,
-            sincronizado: false 
+            taxaMaq: valorDescontadoMaquina, reserva: reserva, lucro: lucroReal, sincronizado: false 
         };
 
         db.vendas.push(osData);
         db.proximaOS++; 
         
         db.clientes[placaLimpa.replace('-','')] = { 
-            nome: osData.cliente, tel: osData.tel, marca: osData.marca, 
-            modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa 
+            nome: osData.cliente, tel: osData.tel, marca: osData.marca, modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa 
         };
         localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-
         ultimaOSGerada = osData; 
         
         atualizarListaNomesCadastrados();
-        
         document.getElementById('acoesPosGeracao').style.display = 'block';
 
         if(tipoDoc === 'OS') {
             document.getElementById('resTotalMaq').innerText = formatarBRL(osData.faturamento);
             document.getElementById('resTaxaMaq').innerText = formatarBRL(osData.taxaMaq);
-            document.getElementById('resReserva').innerText = formatarBRL(osData.reserva);
             document.getElementById('resLucro').innerText = formatarBRL(osData.lucro);
             document.getElementById('resumoFinanceiro').style.display = 'block';
         } else {
             document.getElementById('resumoFinanceiro').style.display = 'none';
-            alert("Orcamento gerado com sucesso! OS No " + numOSFormatado);
+            alert("Orçamento gerado! OS Nº " + numOSFormatado);
         }
 
         montarOS(osData);
@@ -905,11 +787,8 @@
         document.getElementById('docKm').innerText = os.km;
 
         let html = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td></tr>`;
-        
         if(os.pecasFinal) {
-            os.pecasFinal.forEach(p => {
-                html += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`;
-            });
+            os.pecasFinal.forEach(p => { html += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`; });
         }
 
         document.querySelector('#docTabelaItens tbody').innerHTML = html;
@@ -920,215 +799,191 @@
 
     function enviarWhatsApp(osNumEspecifica = null) {
         let osSelecionada = osNumEspecifica ? db.vendas.find(v => v.osNum === osNumEspecifica) : ultimaOSGerada;
-
-        if(!osSelecionada) return alert("Nenhum documento encontrado para envio.");
+        if(!osSelecionada) return alert("Nenhum documento encontrado.");
 
         let telefoneCliente = osSelecionada.tel.replace(/\D/g, ''); 
-
         if(telefoneCliente.length < 10) {
-            let numCorrigido = prompt("O telefone nao tem o DDD correto. Digite com DDD (Ex: 85999999999):", telefoneCliente);
-            if(numCorrigido) {
-                telefoneCliente = numCorrigido.replace(/\D/g, '');
-            } else {
-                return;
-            }
+            let numCorrigido = prompt("O telefone não tem o DDD. Digite com DDD (Ex: 85999999999):", telefoneCliente);
+            if(numCorrigido) telefoneCliente = numCorrigido.replace(/\D/g, '');
+            else return;
         }
+        if(!telefoneCliente.startsWith('55')) telefoneCliente = '55' + telefoneCliente;
 
-        if(!telefoneCliente.startsWith('55')) {
-            telefoneCliente = '55' + telefoneCliente;
-        }
-
-        let tipoDocStr = osSelecionada.status === 'ORÇAMENTO' ? 'Orcamento' : 'Ordem de Servico';
-        let tituloSaudacao = osSelecionada.status === 'ORÇAMENTO' 
-            ? "Aqui esta o orcamento detalhado que voce solicitou conosco." 
-            : "Aqui esta o resumo da sua Ordem de Servico concluida.";
+        let tipoDocStr = osSelecionada.status === 'ORÇAMENTO' ? 'Orçamento' : 'Ordem de Serviço';
+        let tituloSaudacao = osSelecionada.status === 'ORÇAMENTO' ? "Aqui está o orçamento que você solicitou." : "Aqui está o resumo da sua Ordem de Serviço concluída.";
         
-        let msg = `Ola, *${osSelecionada.cliente}*!\n${tituloSaudacao}\n\n`;
-        
-        msg += `*${CONFIG.empresa.nome}*\n`;
-        msg += `-----------------------------------\n`;
-        msg += `*Documento:* ${osSelecionada.osNum} (${tipoDocStr})\n`;
-        msg += `*Veiculo:* ${osSelecionada.marca} ${osSelecionada.modelo} (${osSelecionada.placa})\n`;
-        msg += `-----------------------------------\n\n`;
-        
-        msg += `*DETALHAMENTO:*\n\n`;
-        msg += `*Mao de Obra:* ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
+        let msg = `Olá, *${osSelecionada.cliente}*!\n${tituloSaudacao}\n\n*${CONFIG.empresa.nome}*\n-----------------------------------\n*Doc:* ${osSelecionada.osNum} (${tipoDocStr})\n*Veículo:* ${osSelecionada.marca} ${osSelecionada.modelo} (${osSelecionada.placa})\n-----------------------------------\n\n*Mão de Obra:* ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
         
         if(osSelecionada.pecasFinal && osSelecionada.pecasFinal.length > 0) {
-            msg += `\n*Pecas e Materiais:*\n`;
-            osSelecionada.pecasFinal.forEach(p => {
-                msg += `- ${p.qtd}x ${p.nome} (${formatarBRL(p.total)})\n`;
-            });
+            msg += `\n*Peças:*\n`;
+            osSelecionada.pecasFinal.forEach(p => { msg += `- ${p.qtd}x ${p.nome} (${formatarBRL(p.total)})\n`; });
         }
+        msg += `\n-----------------------------------\n*TOTAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
+        if(osSelecionada.condPag) msg += `*Forma Pgto:* ${osSelecionada.condPag.replace('PAGAMENTO VIA ', '').replace('*', '').trim()}\n`;
         
-        msg += `\n-----------------------------------\n`;
-        msg += `*TOTAL FINAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
+        if(osSelecionada.status === 'ORÇAMENTO') msg += `\n_Para autorizar, responda com_ *"EU APROVO"*.\n`;
+        else msg += `\n_Garantia de 90 dias. Guarde esta mensagem._\n`;
         
-        if(osSelecionada.condPag) {
-            let pagamentoLimpo = osSelecionada.condPag.replace('PAGAMENTO VIA ', '').replace('*', '').trim();
-            msg += `*Forma de Pgto:* ${pagamentoLimpo}\n`;
-        }
-        msg += `-----------------------------------\n\n`;
+        window.open(`https://wa.me/${telefoneCliente}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
 
-        if(osSelecionada.status === 'ORÇAMENTO') {
-            msg += `_Para autorizar o inicio do servico, basta responder esta mensagem com_ *"EU APROVO"*.\n\n`;
-        } else {
-            msg += `_Garantia de 90 dias. Guarde esta mensagem como comprovante._\n\n`;
-        }
-        
-        msg += `Agradecemos a preferencia! Qualquer duvida, estamos a disposicao no balcao.`;
+    // =========================================================
+    // 🚀 LÓGICA DO PÁTIO KANBAN
+    // =========================================================
+    function renderKanban() {
+        const statusIds = { "ORÇAMENTO": "kb-orcamento", "AGUARDANDO PEÇAS": "kb-pecas", "EM SERVIÇO": "kb-servico", "PRONTO": "kb-pronto", "ENTREGUE": "kb-entregue" };
+        Object.values(statusIds).forEach(id => document.getElementById(id).innerHTML = '');
 
-        let msgCodificada = encodeURIComponent(msg);
-        let linkWhatsapp = `https://wa.me/${telefoneCliente}?text=${msgCodificada}`;
-        
-        window.open(linkWhatsapp, '_blank');
+        db.vendas.slice(-50).forEach(v => {
+            const fase = v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO');
+            const colId = statusIds[fase];
+            if(!colId) return;
+
+            const dias = Math.floor((Date.now() - v.timestamp) / (1000 * 60 * 60 * 24));
+            const corGarantia = dias <= 90 ? '#4caf50' : '#f44336';
+
+            const card = document.createElement('div');
+            card.className = 'kanban-card';
+            card.innerHTML = `
+                <h4>${v.placa} - ${v.modelo}</h4>
+                <p>Cliente: ${v.cliente}</p>
+                <p>Garantia: <span style="color:${corGarantia}; font-weight:bold;">${dias}d / 90d</span></p>
+                <div class="card-footer">
+                    <button class="btn-small" style="background:#444" onclick="moverFase('${v.osNum}', -1)">◀</button>
+                    <div>
+                        <button class="btn-small" style="background:#25D366" onclick="enviarWhatsApp('${v.osNum}')">WPP</button>
+                        <button class="btn-small" onclick="verOSAntiga('${v.osNum}')">VER</button>
+                        <button class="btn-small" style="background:#dc3545" onclick="excluirOS('${v.osNum}')">X</button>
+                    </div>
+                    <button class="btn-small" style="background:#444" onclick="moverFase('${v.osNum}', 1)">▶</button>
+                </div>
+            `;
+            document.getElementById(colId).appendChild(card);
+        });
+    }
+
+    function moverFase(osNum, direcao) {
+        const fases = ["ORÇAMENTO", "AGUARDANDO PEÇAS", "EM SERVIÇO", "PRONTO", "ENTREGUE"];
+        let v = db.vendas.find(x => x.osNum === osNum);
+        if(!v) return;
+        let atual = fases.indexOf(v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO'));
+        let nova = atual + direcao;
+        if(nova >= 0 && nova < fases.length) {
+            v.fase = fases[nova];
+            if(fases[nova] !== 'ORÇAMENTO' && v.status === 'ORÇAMENTO') {
+                if(confirm("Deseja aprovar este orçamento e transformá-lo em OS oficial?")) v.status = 'OS';
+                else { v.fase = 'ORÇAMENTO'; return; } 
+            }
+            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+            renderKanban();
+        }
     }
 
     function excluirOS(osNum) {
-        if(confirm(`Tem certeza que deseja apagar o documento No ${osNum}? Isso altera os valores financeiros permanentemente.`)) {
+        if(confirm(`Tem certeza que deseja apagar o documento Nº ${osNum}?`)) {
             db.vendas = db.vendas.filter(v => v.osNum !== osNum);
             localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-            
+            renderKanban();
             if(document.getElementById('aba-financeiro').classList.contains('active')) atualizarDashboard();
-            if(document.getElementById('aba-faturamento-pecas').classList.contains('active')) atualizarRelatorioPecas();
-            if(document.getElementById('aba-historico').classList.contains('active')) filtrarHistorico();
-            if(document.getElementById('aba-clientes').classList.contains('active')) atualizarAbaClientes();
-        }
-    }
-
-    function efetivarServico(osNum) {
-        if(confirm("O cliente autorizou o servico? Isso vai transformar o Orcamento em Ordem de Servico e incluir os valores no seu faturamento.")) {
-            let os = db.vendas.find(v => v.osNum === osNum);
-            if(os) {
-                os.status = 'OS';
-                os.fase = 'EM SERVIÇO';
-                localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-                filtrarHistorico();
-                alert("Sucesso! Orcamento efetivado.");
-            }
         }
     }
 
     function verOSAntiga(osNum) {
         const os = db.vendas.find(v => v.osNum === osNum);
-        if(os) {
-            montarOS(os);
-            abrirPreview(); 
-        }
-    }
-
-    function mudarFaseOS(osNum, novaFase) {
-        let os = db.vendas.find(v => v.osNum === osNum);
-        if(os) {
-            os.fase = novaFase;
-            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-        }
+        if(os) { montarOS(os); abrirPreview(); }
     }
 
     // =========================================================
-    // LÓGICA DO SEMÁFORO DE GARANTIA (HISTÓRICO/PÁTIO)
+    // 📅 LÓGICA DA AGENDA
     // =========================================================
-    function filtrarHistorico() {
-        const busca = document.getElementById('buscaPlaca').value.replace(/[^A-Z0-9]/g, '');
-        const filtrados = db.vendas.filter(v => v.placa.replace('-','') === busca);
-        const agora = Date.now();
-        
-        document.getElementById('tabelaHistorico').innerHTML = filtrados.map(v => {
-            let seletorFase = '';
-            let badgeGarantia = '';
+    function salvarAgendamento() {
+        const item = {
+            id: Date.now(),
+            nome: document.getElementById('agNome').value.toUpperCase(),
+            data: document.getElementById('agData').value,
+            hora: document.getElementById('agHora').value,
+            carro: document.getElementById('agCarro').value.toUpperCase()
+        };
+        if(!item.nome || !item.data) return alert("Preencha Nome e Data.");
+        db.agenda.push(item);
+        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+        document.getElementById('agNome').value = '';
+        document.getElementById('agCarro').value = '';
+        renderAgenda();
+    }
 
-            if(v.status === 'OS') {
-                let f = v.fase || 'EM SERVIÇO';
-                seletorFase = `
-                <select onchange="mudarFaseOS('${v.osNum}', this.value)" style="padding:4px; font-size:10px; border-radius:3px; background:#1e1e24; color:#fff; border:1px solid #444; width:130px;">
-                    <option value="AGUARDANDO PEÇAS" ${f === 'AGUARDANDO PEÇAS' ? 'selected' : ''}>🟡 Aguardando Peca</option>
-                    <option value="EM SERVIÇO" ${f === 'EM SERVIÇO' ? 'selected' : ''}>🔵 Em Servico</option>
-                    <option value="PRONTO" ${f === 'PRONTO' ? 'selected' : ''}>🟢 Pronto / Patio</option>
-                    <option value="ENTREGUE" ${f === 'ENTREGUE' ? 'selected' : ''}>⚫ Entregue</option>
-                </select>`;
-
-                let diasPassados = Math.floor((agora - v.timestamp) / (1000 * 60 * 60 * 24));
-                if(diasPassados <= 90) {
-                    badgeGarantia = `<br><span style="background:#28a745; color:#fff; padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: bold; display:inline-block; margin-top:4px;">🟢 NO PRAZO (${90 - diasPassados}d)</span>`;
-                } else {
-                    badgeGarantia = `<br><span style="background:#dc3545; color:#fff; padding: 2px 5px; border-radius: 3px; font-size: 9px; font-weight: bold; display:inline-block; margin-top:4px;">🔴 EXPIRADA</span>`;
-                }
-            } else {
-                seletorFase = `<span class="badge-warning">ORÇAMENTO</span>`;
-            }
-
-            return `
+    function renderAgenda() {
+        let agendaOrdenada = db.agenda.sort((a, b) => new Date(a.data + 'T' + (a.hora||'00:00')) - new Date(b.data + 'T' + (b.hora||'00:00')));
+        document.getElementById('tabelaAgenda').innerHTML = agendaOrdenada.map(a => `
             <tr style="border-bottom: 1px solid #333;">
-                <td style="padding: 10px;">${v.data}${badgeGarantia}</td>
-                <td>${v.osNum}</td>
-                <td>${seletorFase}</td>
-                <td>${v.placa}</td>
-                <td><strong style="color:white;">${formatarBRL(v.faturamento)}</strong></td>
+                <td>${a.data.split('-').reverse().join('/')} às ${a.hora}</td>
+                <td>${a.nome}</td>
+                <td>${a.carro}</td>
                 <td>
-                    <button onclick="verOSAntiga('${v.osNum}')" class="btn-small" style="margin-right: 5px;">🔍 VER</button>
-                    <button onclick="enviarWhatsApp('${v.osNum}')" class="btn-small" style="background:#25D366; margin-right: 5px;" title="Enviar no WhatsApp">📱 ZAP</button>
-                    ${v.status === 'ORÇAMENTO' ? `<button onclick="efetivarServico('${v.osNum}')" class="btn-small" style="background:#007bff; margin-right: 5px;">✔️ APROVAR</button>` : ''}
-                    <button onclick="excluirOS('${v.osNum}')" class="btn-remove">🗑️</button>
+                    <button class="btn-small" style="background:#007bff;" onclick="iniciarOSdaAgenda(${a.id})">🛠️ INICIAR OS</button>
+                    <button class="btn-remove" onclick="removerAgenda(${a.id})">X</button>
                 </td>
-            </tr>`;
-        }).join('');
+            </tr>
+        `).join('');
     }
 
+    function iniciarOSdaAgenda(id) {
+        const a = db.agenda.find(x => x.id === id);
+        if(a) {
+            document.getElementById('nomeCliente').value = a.nome;
+            document.getElementById('modelo').value = a.carro;
+            openTab('aba-os');
+            removerAgenda(id);
+        }
+    }
+
+    function removerAgenda(id) {
+        db.agenda = db.agenda.filter(x => x.id !== id);
+        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+        renderAgenda();
+    }
+
+    // =========================================================
+    // 📈 LÓGICA DRE E FINANCEIRO
+    // =========================================================
     function atualizarDashboard() {
-        let f = 0, t = 0, r = 0, l = 0;
-        
-        document.getElementById('tabelaVendas').innerHTML = db.vendas.map(v => {
-            if (v.status === 'ORÇAMENTO') return ''; 
+        let faturamento = 0, custoPecas = 0, comissaoMec = 0, taxas = 0;
+        let htmlDRE = '';
 
-            f += v.faturamento; t += v.taxaMaq; r += v.reserva; l += v.lucro;
+        db.vendas.forEach(v => {
+            if (v.status === 'ORÇAMENTO') return; 
 
-            return `<tr>
+            faturamento += v.faturamento;
+            custoPecas += (v.custoTotalPecas || 0);
+            comissaoMec += (v.maoObraOriginal * 0.4);
+            taxas += (v.taxaMaq || 0);
+
+            htmlDRE += `<tr>
                 <td>${v.data}</td><td>${v.osNum}</td><td>${v.placa}</td>
-                <td>${formatarBRL(v.faturamento)}</td><td style="color:#4caf50; font-weight:bold;">${formatarBRL(v.lucro)}</td>
-                <td><button onclick="excluirOS('${v.osNum}')" class="btn-remove">🗑️ EXCLUIR</button></td>
+                <td>${formatarBRL(v.faturamento)}</td><td>${formatarBRL(v.taxaMaq || 0)}</td>
+                <td style="color:#4caf50; font-weight:bold">${formatarBRL(v.lucro)}</td>
+                <td><button onclick="excluirOS('${v.osNum}')" class="btn-remove">🗑️</button></td>
             </tr>`;
-        }).join('');
+        });
 
-        document.getElementById('dashFaturamento').innerText = formatarBRL(f);
-        document.getElementById('dashTaxas').innerText = formatarBRL(t);
-        document.getElementById('dashReservas').innerText = formatarBRL(r);
-        document.getElementById('dashLucro').innerText = formatarBRL(l);
+        document.getElementById('dreFaturamento').innerText = formatarBRL(faturamento);
+        document.getElementById('dreCustoPecas').innerText = formatarBRL(custoPecas);
+        document.getElementById('dreComissao').innerText = formatarBRL(comissaoMec);
+        document.getElementById('dreLucro').innerText = formatarBRL(faturamento - custoPecas - comissaoMec - taxas);
+        document.getElementById('tabelaDRE').innerHTML = htmlDRE;
 
         atualizarPainelMO();
     }
 
     function atualizarPainelMO() {
-        let moTotal = 0, moMecanico = 0, moOficina = 0;
-        let htmlMecanicos = '';
+        let moTotal = 0, moMecanico = 0, moOficina = 0, htmlMecanicos = '';
+        let inicioMs = document.getElementById('filtroInicioMO').value ? new Date(document.getElementById('filtroInicioMO').value + "T00:00:00").getTime() : 0;
+        let fimMs = document.getElementById('filtroFimMO').value ? new Date(document.getElementById('filtroFimMO').value + "T23:59:59").getTime() : Infinity;
 
-        let dataInicioStr = document.getElementById('filtroInicioMO').value;
-        let dataFimStr = document.getElementById('filtroFimMO').value;
-
-        let inicioMs = dataInicioStr ? new Date(dataInicioStr + "T00:00:00").getTime() : 0;
-        let fimMs = dataFimStr ? new Date(dataFimStr + "T23:59:59").getTime() : Infinity;
-
-        db.vendas.forEach(v => {
-            if (v.status === 'ORÇAMENTO') return;
-
-            if (v.timestamp >= inicioMs && v.timestamp <= fimMs) {
-                if(v.mecanico && v.maoObraOriginal > 0) {
-                    let valorMecanico = v.maoObraOriginal * 0.40;
-                    let valorOficina = v.maoObraOriginal * 0.60;
-                    
-                    moTotal += v.maoObraOriginal;
-                    moMecanico += valorMecanico;
-                    moOficina += valorOficina;
-
-                    let status = v.sincronizado ? '<span style="color:#aaa;">✔️ ENVIADO</span>' : '<span style="color:#ffcc00;">⏳ PENDENTE</span>';
-                    htmlMecanicos += `<tr>
-                        <td>${v.mecanico}</td>
-                        <td>${v.placa}</td>
-                        <td style="color:#fff; font-weight:bold;">${formatarBRL(v.maoObraOriginal)}</td>
-                        <td style="color:#ffcc00; font-weight:bold;">${formatarBRL(valorMecanico)}</td>
-                        <td>${status}</td>
-                    </tr>`;
-                }
-            }
+        db.vendas.filter(v => v.status === 'OS' && v.timestamp >= inicioMs && v.timestamp <= fimMs && v.mecanico && v.maoObraOriginal > 0).forEach(v => {
+            let valMec = v.maoObraOriginal * 0.40;
+            moTotal += v.maoObraOriginal; moMecanico += valMec; moOficina += (v.maoObraOriginal * 0.60);
+            htmlMecanicos += `<tr><td>${v.mecanico}</td><td>${v.placa}</td><td style="color:#fff;">${formatarBRL(v.maoObraOriginal)}</td><td style="color:#ffcc00;">${formatarBRL(valMec)}</td><td>${v.sincronizado ? '✔️' : '⏳'}</td></tr>`;
         });
 
         document.getElementById('tabelaMecanicos').innerHTML = htmlMecanicos;
@@ -1144,271 +999,149 @@
     }
 
     function atualizarRelatorioPecas() {
-        let custoTotal = 0, vendaTotal = 0, lucroTotal = 0, htmlPecas = '';
-        
-        db.vendas.forEach(v => {
-            if(v.status === 'ORÇAMENTO') return; 
-            
-            if(v.pecasFinal && v.pecasFinal.length > 0) {
-                let custoOS = v.custoTotalPecas || 0; 
-                let vendaOS = v.vendaTotalPecas || 0;
-                let lucroOS = vendaOS - custoOS;
-                
-                custoTotal += custoOS; vendaTotal += vendaOS; lucroTotal += lucroOS;
-                
-                htmlPecas += `<tr>
-                    <td>${v.data}</td><td>${v.osNum}</td><td>${v.itensResumo}</td>
-                    <td style="color:#ff4d4d">${formatarBRL(custoOS)}</td><td style="color:#4da6ff">${formatarBRL(vendaOS)}</td>
-                    <td style="color:#4caf50; font-weight:bold;">${formatarBRL(lucroOS)}</td>
-                </tr>`;
-            }
+        let cTotal = 0, vTotal = 0, lTotal = 0, htmlPecas = '';
+        db.vendas.filter(v => v.status === 'OS' && v.pecasFinal && v.pecasFinal.length > 0).forEach(v => {
+            let cOS = v.custoTotalPecas || 0, vOS = v.vendaTotalPecas || 0, lOS = vOS - cOS;
+            cTotal += cOS; vTotal += vOS; lTotal += lOS;
+            htmlPecas += `<tr><td>${v.data}</td><td>${v.osNum}</td><td>${v.itensResumo}</td><td style="color:#ff4d4d">${formatarBRL(cOS)}</td><td style="color:#4da6ff">${formatarBRL(vOS)}</td><td style="color:#4caf50; font-weight:bold;">${formatarBRL(lOS)}</td></tr>`;
         });
-        
-        document.getElementById('pecasCustoTotal').innerText = formatarBRL(custoTotal);
-        document.getElementById('pecasVendaTotal').innerText = formatarBRL(vendaTotal);
-        document.getElementById('pecasLucroTotal').innerText = formatarBRL(lucroTotal);
+        document.getElementById('pecasCustoTotal').innerText = formatarBRL(cTotal);
+        document.getElementById('pecasVendaTotal').innerText = formatarBRL(vTotal);
+        document.getElementById('pecasLucroTotal').innerText = formatarBRL(lTotal);
         document.getElementById('tabelaDetalhamentoPecas').innerHTML = htmlPecas;
     }
 
-    function exportarCSV(tipo) {
-        let csv = [];
-        
-        if(tipo === 'financeiro') {
-            csv.push("DATA;OS;PLACA;VALOR_MAQUINA;TAXA_BANCO;RESERVA_RETIDA;LUCRO_LIQUIDO");
-            db.vendas.forEach(v => {
-                if(v.status === 'OS') {
-                    csv.push(`${v.data};${v.osNum};${v.placa};${v.faturamento.toFixed(2).replace('.',',')};${v.taxaMaq.toFixed(2).replace('.',',')};${v.reserva.toFixed(2).replace('.',',')};${v.lucro.toFixed(2).replace('.',',')}`);
-                }
-            });
-        } else if (tipo === 'pecas') {
-            csv.push("DATA;OS;ITENS_VENDIDOS;CUSTO_PAGO;VALOR_VENDIDO;LUCRO_GERADO");
-            db.vendas.forEach(v => {
-                if(v.status === 'OS' && v.pecasFinal && v.pecasFinal.length > 0) {
-                    let custoOS = v.custoTotalPecas || 0;
-                    let vendaOS = v.vendaTotalPecas || 0;
-                    let lucroOS = vendaOS - custoOS;
-                    csv.push(`${v.data};${v.osNum};"${v.itensResumo}";${custoOS.toFixed(2).replace('.',',')};${vendaOS.toFixed(2).replace('.',',')};${lucroOS.toFixed(2).replace('.',',')}`);
-                }
-            });
-        }
-
-        let blob = new Blob(["\uFEFF" + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        let link = document.createElement("a");
-        let url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Relatorio_${tipo}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
+    // =========================================================
+    // CRM E CLIENTES
+    // =========================================================
     function atualizarAbaClientes() {
-        let html = '';
-        let clientesMap = {};
+        let html = ''; let clientesMap = {}; let agora = Date.now();
         
-        db.vendas.forEach(v => {
-            if(v.status === 'ORÇAMENTO') return; 
-            if(!clientesMap[v.tel]) {
-                clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp };
-            }
+        db.vendas.filter(v => v.status === 'OS').forEach(v => {
+            if(!clientesMap[v.tel]) clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp };
             clientesMap[v.tel].veiculos.add(`${v.marca} ${v.modelo} (${v.placa})`);
-            if(v.timestamp > clientesMap[v.tel].ultimaData) {
-                clientesMap[v.tel].ultimaData = v.timestamp;
+            if(v.timestamp > clientesMap[v.tel].ultimaData) clientesMap[v.tel].ultimaData = v.timestamp;
+        });
+
+        // Adiciona também clientes que estão cadastrados mas não têm OS
+        Object.values(db.clientes).forEach(c => {
+            if(!clientesMap[c.tel]) {
+                clientesMap[c.tel] = { nome: c.nome, veiculos: new Set([`${c.marca||''} ${c.modelo||''} (${c.placa})`]), ultimaData: 0 };
             }
         });
 
-        let agora = Date.now();
         Object.keys(clientesMap).forEach(tel => {
             let c = clientesMap[tel];
-            let dias = Math.floor((agora - c.ultimaData) / (1000 * 60 * 60 * 24));
-            let dataUltimaStr = new Date(c.ultimaData).toLocaleDateString('pt-BR');
-            let veiculosStr = Array.from(c.veiculos).join(', ');
+            let dias = c.ultimaData > 0 ? Math.floor((agora - c.ultimaData) / (1000 * 60 * 60 * 24)) : 0;
+            let dataStr = c.ultimaData > 0 ? new Date(c.ultimaData).toLocaleDateString('pt-BR') : 'Apenas Cadastro';
+            let badgeDias = c.ultimaData > 0 ? (dias > 180 ? `<span class="badge-warning">Falta há ${dias} dias</span>` : `<span class="badge-ok">Veio há ${dias} dias</span>`) : '';
             
-            let badgeDias = dias > 180 ? `<span class="badge-warning">Falta ha ${dias} dias</span>` : `<span class="badge-ok">Veio ha ${dias} dias</span>`;
+            let placaExemplo = Array.from(c.veiculos)[0].match(/\((.*?)\)/);
+            let placaEdit = placaExemplo ? placaExemplo[1].replace('-','') : '';
 
             html += `<tr style="border-bottom: 1px solid #333;">
-                <td style="padding: 10px;">${c.nome}</td>
-                <td>${tel}</td>
-                <td>${veiculosStr}</td>
-                <td>${dataUltimaStr}<br>${badgeDias}</td>
+                <td>${c.nome}</td><td>${tel}</td><td>${Array.from(c.veiculos).join(', ')}</td>
+                <td>${dataStr}<br>${badgeDias}</td>
                 <td>
-                    <button class="btn-small" style="background:#007bff; padding: 8px; margin-right:5px;" onclick="abrirEditarCliente('${c.placa || Array.from(c.veiculos)[0].match(/\((.*?)\)/)[1]}')">✏️ EDITAR</button>
-                    <button class="btn-small" style="background:#dc3545; padding: 8px; margin-right:5px;" onclick="excluirCliente('${c.placa || Array.from(c.veiculos)[0].match(/\((.*?)\)/)[1].replace('-','')}')">🗑️ EXCLUIR</button>
-                    <button class="btn-small" style="background:#25D366; padding: 8px;" onclick="zapMarketing('${tel}', '${c.nome}', ${dias})">📱 MARKETING</button>
+                    <button class="btn-small" style="background:#007bff;" onclick="abrirEditarCliente('${placaEdit}')">✏️ EDITAR</button>
+                    <button class="btn-small" style="background:#dc3545;" onclick="excluirCliente('${placaEdit}')">🗑️</button>
+                    <button class="btn-small" style="background:#25D366;" onclick="zapMarketing('${tel}', '${c.nome}', ${dias})">📱 ZAP</button>
                 </td>
             </tr>`;
         });
         document.getElementById('tabelaClientesBody').innerHTML = html;
     }
 
+    function abrirNovoCliente() {
+        document.getElementById('tituloModalCliente').innerText = "➕ Novo Cadastro de Veículo";
+        document.getElementById('editPlacaAntiga').value = ""; 
+        ['Nome','Tel','Marca','Modelo','Ano','Cor','Placa'].forEach(id => document.getElementById('edit'+id).value = '');
+        document.getElementById('modalEditarCliente').style.display = 'flex';
+    }
+
     function abrirEditarCliente(placaKey) {
-        let placaKeyLimpa = placaKey.replace(/[^A-Z0-9]/g, '');
-        let c = db.clientes[placaKeyLimpa];
-        if(!c) {
-            alert("Não foi possível carregar os dados deste cliente para edição.");
-            return;
-        }
-        document.getElementById('editPlacaAntiga').value = placaKeyLimpa;
-        document.getElementById('editNome').value = c.nome || '';
-        document.getElementById('editTel').value = c.tel || '';
-        document.getElementById('editMarca').value = c.marca || '';
-        document.getElementById('editModelo').value = c.modelo || '';
-        document.getElementById('editAno').value = c.ano || '';
-        document.getElementById('editCor').value = c.cor || '';
-        document.getElementById('editPlaca').value = c.placa || '';
-        
+        let c = db.clientes[placaKey];
+        if(!c) return alert("Dados do cliente não encontrados.");
+        document.getElementById('tituloModalCliente').innerText = "✏️ Editar Cadastro do Veículo";
+        document.getElementById('editPlacaAntiga').value = placaKey;
+        ['Nome','Tel','Marca','Modelo','Ano','Cor','Placa'].forEach(id => document.getElementById('edit'+id).value = c[id.toLowerCase()] || '');
         document.getElementById('modalEditarCliente').style.display = 'flex';
     }
     
-    function fecharEditarCliente() {
-        document.getElementById('modalEditarCliente').style.display = 'none';
-    }
+    function fecharEditarCliente() { document.getElementById('modalEditarCliente').style.display = 'none'; }
 
     function salvarClienteEditado() {
         let placaAntiga = document.getElementById('editPlacaAntiga').value;
-        let novaPlacaFormatada = document.getElementById('editPlaca').value.toUpperCase();
-        let novaPlacaKey = novaPlacaFormatada.replace(/[^A-Z0-9]/g, '');
-
-        if(!novaPlacaKey) return alert("A placa nao pode ficar vazia.");
-
-        let c = {
-            nome: document.getElementById('editNome').value.toUpperCase(),
-            tel: document.getElementById('editTel').value,
-            marca: document.getElementById('editMarca').value.toUpperCase(),
-            modelo: document.getElementById('editModelo').value.toUpperCase(),
-            ano: document.getElementById('editAno').value.toUpperCase(),
-            cor: document.getElementById('editCor').value.toUpperCase(),
-            placa: novaPlacaFormatada
-        };
-
-        if(placaAntiga !== novaPlacaKey) {
-            delete db.clientes[placaAntiga];
-        }
+        let novaPlaca = document.getElementById('editPlaca').value.toUpperCase();
+        let novaKey = novaPlaca.replace(/[^A-Z0-9]/g, '');
+        if(!novaKey) return alert("A placa é obrigatória!");
         
-        db.clientes[novaPlacaKey] = c;
+        let c = { nome: document.getElementById('editNome').value.toUpperCase(), tel: document.getElementById('editTel').value, marca: document.getElementById('editMarca').value.toUpperCase(), modelo: document.getElementById('editModelo').value.toUpperCase(), ano: document.getElementById('editAno').value.toUpperCase(), cor: document.getElementById('editCor').value.toUpperCase(), placa: novaPlaca };
+        
+        if(placaAntiga && placaAntiga !== novaKey) delete db.clientes[placaAntiga];
+        db.clientes[novaKey] = c;
+        
         localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-
-        atualizarAbaClientes();
-        atualizarListaNomesCadastrados();
-        fecharEditarCliente();
-        alert("Cadastro atualizado com sucesso!");
+        atualizarAbaClientes(); atualizarListaNomesCadastrados(); fecharEditarCliente();
+        alert("Cadastro salvo com sucesso!");
     }
 
     function excluirCliente(placaKey) {
-        if(confirm("Tem certeza que deseja apagar o cadastro rápido deste veículo? As Ordens de Serviço antigas ligadas a ele NÃO serão apagadas e continuarão no seu histórico financeiro.")) {
-            delete db.clientes[placaKey];
-            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-            atualizarAbaClientes();
-            atualizarListaNomesCadastrados();
+        if(confirm("Apagar cadastro rápido? O histórico de OS não será alterado.")) {
+            delete db.clientes[placaKey]; localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+            atualizarAbaClientes(); atualizarListaNomesCadastrados();
         }
     }
 
     function zapMarketing(telefone, nome, dias) {
         let telLimpo = telefone.replace(/\D/g, '');
-        if(telLimpo.length < 10) return alert("Telefone invalido no cadastro.");
+        if(telLimpo.length < 10) return;
         if(!telLimpo.startsWith('55')) telLimpo = '55' + telLimpo;
-        
-        let msg = "";
-        let nomeOficina = CONFIG.empresa.nome;
+        let msg = dias > 180 ? `Olá, *${nome}*! Aqui é da *${CONFIG.empresa.nome}*. Notamos que já faz um tempo desde a sua última visita. Como está o veículo? Agende sua revisão preventiva!` : `Olá, *${nome}*! Passando aqui em nome da *${CONFIG.empresa.nome}* para saber se o serviço realizado recentemente ficou 100%. Estamos à disposição!`;
+        window.open(`https://wa.me/${telLimpo}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
 
-        if(dias > 180) {
-            msg = `Ola, *${nome}*! Tudo bem?\n\nAqui e da equipe *${nomeOficina}*.\nNotamos que ja faz um tempo desde a sua ultima visita. Como esta o funcionamento do veiculo?\n\nLembre-se que a manutencao preventiva e fundamental. Se precisar agendar uma revisao, estamos a disposicao!`;
+    function exportarCSV(tipo) {
+        let csv = [];
+        if(tipo === 'financeiro') {
+            csv.push("DATA;OS;PLACA;VALOR_MAQUINA;TAXA_BANCO;RESERVA_RETIDA;LUCRO_LIQUIDO");
+            db.vendas.filter(v => v.status === 'OS').forEach(v => csv.push(`${v.data};${v.osNum};${v.placa};${v.faturamento.toFixed(2).replace('.',',')};${(v.taxaMaq||0).toFixed(2).replace('.',',')};${v.reserva.toFixed(2).replace('.',',')};${v.lucro.toFixed(2).replace('.',',')}`));
         } else {
-            msg = `Ola, *${nome}*! Tudo bem?\n\nPassando aqui em nome da *${nomeOficina}* para acompanhar o seu atendimento.\n\nGostariamos de saber se o servico realizado recentemente ficou 100%. A sua satisfacao e a nossa prioridade. Qualquer coisa, estamos a disposicao!`;
+            csv.push("DATA;OS;ITENS;CUSTO;VENDA;LUCRO");
+            db.vendas.filter(v => v.status === 'OS' && v.pecasFinal).forEach(v => csv.push(`${v.data};${v.osNum};"${v.itensResumo}";${(v.custoTotalPecas||0).toFixed(2).replace('.',',')};${(v.vendaTotalPecas||0).toFixed(2).replace('.',',')};${((v.vendaTotalPecas||0)-(v.custoTotalPecas||0)).toFixed(2).replace('.',',')}`));
         }
-        
-        let link = `https://wa.me/${telLimpo}?text=${encodeURIComponent(msg)}`;
-        window.open(link, '_blank');
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob(["\uFEFF" + csv.join('\n')], { type: 'text/csv;charset=utf-8;' }));
+        a.download = `Relatorio_${tipo}.csv`; a.click();
     }
 
     function exportarBackup() {
-        const dataStr = localStorage.getItem(LOCAL_DB_KEY);
-        if(!dataStr || dataStr.length < 50) return alert("Nenhum dado encontrado para gerar backup.");
-        
-        const blob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        
-        const dataFormatada = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
-        a.href = url;
-        a.download = `Backup_${CONFIG.appID}_${dataFormatada}.json`;
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([localStorage.getItem(LOCAL_DB_KEY)], {type: "application/json"}));
+        a.download = `Backup_AGDIESEL_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.json`; a.click();
     }
 
     function importarBackup(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                
-                if(data && typeof data === 'object' && Array.isArray(data.vendas)) { 
-                    if(confirm("ATENÇÃO: Restaurar o backup apagará os dados atuais do navegador que não estiverem neste arquivo. Tem certeza?")) {
-                        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(data));
-                        alert("Backup restaurado com sucesso! O sistema será recarregado agora.");
-                        location.reload();
-                    }
-                } else {
-                    alert("⚠️ O arquivo selecionado não parece ser um backup válido deste sistema.");
-                }
-            } catch (err) {
-                alert("Erro ao tentar ler o arquivo. Ele pode estar corrompido.");
+        let reader = new FileReader();
+        reader.onload = e => {
+            if(confirm("Isso substituirá os dados atuais. Confirmar?")) {
+                localStorage.setItem(LOCAL_DB_KEY, e.target.result); location.reload();
             }
         };
-        reader.readAsText(file);
-        event.target.value = ''; 
+        reader.readAsText(event.target.files[0]);
     }
 
     function sincronizarPlanilha() {
-        if(CONFIG.sistema.linkPlanilha === "URL_DO_GOOGLE_APPS_SCRIPT_DO_CLIENTE_AQUI") return alert("Configure a URL da planilha no painel CONFIG primeiro.");
+        const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status === 'OS');
+        if(pendentes.length === 0) return alert("Nenhuma pendência!");
         
-        const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status !== 'ORÇAMENTO');
-        
-        if(pendentes.length === 0) return alert("Nenhuma mao de obra pendente!");
-
-        const btnSync = document.querySelector('.btn-sync');
-        btnSync.innerText = "⏳ ENVIANDO...";
-        btnSync.style.background = "#666";
-
-        const payload = pendentes.map(v => ({
-            data: v.data, 
-            mecanico: v.mecanico, 
-            placa: v.placa, 
-            cliente: v.cliente, 
-            valor: v.maoObraOriginal.toFixed(2).replace('.', ',') 
-        }));
-
-        fetch(CONFIG.sistema.linkPlanilha, {
-            method: 'POST',
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        }).then(() => {
-            pendentes.forEach(v => v.sincronizado = true);
-            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-            
-            btnSync.innerText = "✔️ ENVIADOS COM SUCESSO!";
-            btnSync.style.background = "#4caf50";
-            atualizarDashboard();
-            
-            setTimeout(() => {
-                btnSync.innerText = "☁️ ENVIAR PENDENTES PARA A PLANILHA";
-                btnSync.style.background = "#007bff";
-            }, 3000);
-        }).catch(err => {
-            alert("Erro de conexao.");
-            btnSync.innerText = "☁️ TENTAR NOVAMENTE";
-            btnSync.style.background = "#dc3545";
-        });
+        const btnSync = document.querySelector('.btn-sync'); btnSync.innerText = "⏳ ENVIANDO...";
+        fetch(CONFIG.sistema.linkPlanilha, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pendentes.map(v => ({ data: v.data, mecanico: v.mecanico, placa: v.placa, cliente: v.cliente, valor: v.maoObraOriginal.toFixed(2).replace('.', ',') }))) })
+        .then(() => {
+            pendentes.forEach(v => v.sincronizado = true); localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+            btnSync.innerText = "✔️ ENVIADOS!"; setTimeout(() => { btnSync.innerText = "☁️ ENVIAR PENDENTES"; }, 3000); atualizarDashboard();
+        }).catch(() => { alert("Erro de conexão."); btnSync.innerText = "☁️ TENTAR NOVAMENTE"; });
     }
 </script>
-
 </body>
 </html>
