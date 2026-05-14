@@ -298,13 +298,26 @@
     </div>
 
     <div id="aba-financeiro" class="tab-content">
+        <div class="panel" style="background:#23232c;">
+            <div style="display:flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap:10px;">
+                <div>
+                    <h2>📈 Fechamento de Caixa</h2>
+                    <div style="display:flex; gap:10px; align-items: center;">
+                        <div><label style="margin-top:0;">DE:</label><input type="date" id="filtroInicioDRE" onchange="atualizarDashboard()"></div>
+                        <div><label style="margin-top:0;">ATÉ:</label><input type="date" id="filtroFimDRE" onchange="atualizarDashboard()"></div>
+                    </div>
+                </div>
+                <button class="btn-small" style="background:#007bff; height:40px;" onclick="exportarCSV('financeiro')">⬇️ EXPORTAR SEMANA (EXCEL)</button>
+            </div>
+        </div>
+
         <div class="panel-flex" style="margin-bottom: 20px;">
             <div class="panel-col panel" style="background: #23232c; max-width: 60%;">
-                <h3 style="color:#aaa; text-align:center; margin-top:0;">Faturamento vs Lucro (Últimas Vendas)</h3>
+                <h3 style="color:#aaa; text-align:center; margin-top:0;">Faturamento vs Lucro (Gráfico)</h3>
                 <canvas id="chartFaturamento" height="100"></canvas>
             </div>
             <div class="panel-col panel" style="background: #23232c; max-width: 40%;">
-                <h3 style="color:#aaa; text-align:center; margin-top:0;">Top Mecânicos (Mão de Obra)</h3>
+                <h3 style="color:#aaa; text-align:center; margin-top:0;">Top Mecânicos</h3>
                 <canvas id="chartMecanicos" height="200"></canvas>
             </div>
         </div>
@@ -318,10 +331,7 @@
 
         <div class="panel-flex">
             <div class="panel-col panel">
-                <div style="display:flex; justify-content: space-between; align-items: center;">
-                    <h2>Histórico de Vendas Efetivadas</h2>
-                    <button class="btn-small" style="background:#007bff; margin-bottom:10px;" onclick="exportarCSV('financeiro')">⬇️ EXPORTAR EXCEL</button>
-                </div>
+                <h2>Histórico de Vendas Efetivadas</h2>
                 <table class="table-dark">
                     <thead><tr><th>DATA</th><th>OS</th><th>PLACA</th><th>BRUTO</th><th>TAXAS</th><th>LUCRO</th><th>AÇÕES</th></tr></thead>
                     <tbody id="tabelaDRE"></tbody>
@@ -342,25 +352,33 @@
                     <div style="flex: 1; text-align: center; border-left: 1px solid #333;"><span style="font-size: 10px; color: #4caf50;">LUCRO OFICINA (60%)</span><br><strong id="moOficina" style="color: #4caf50; font-size: 14px;">R$ 0,00</strong></div>
                 </div>
                 <table class="table-dark">
-                    <thead><tr><th>MECÂNICO</th><th>PLACA</th><th>M.O TOTAL</th><th>COMISSÃO (40%)</th><th>STATUS</th></tr></thead>
+                    <thead><tr><th>MECÂNICO</th><th>MODELO</th><th>M.O TOTAL</th><th>COMISSÃO (40%)</th><th>STATUS</th></tr></thead>
                     <tbody id="tabelaMecanicos"></tbody>
                 </table>
-                <button class="btn-sync" onclick="sincronizarPlanilha()">☁️ ENVIAR PENDENTES PARA A PLANILHA</button>
+                <button class="btn-sync" onclick="sincronizarPlanilha()">☁️ ENVIAR MODELOS PARA A PLANILHA</button>
             </div>
         </div>
     </div>
 
     <div id="aba-faturamento-pecas" class="tab-content">
+        <div class="panel">
+            <div style="display:flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <h2>📦 Lucro sobre Peças</h2>
+                    <div style="display:flex; gap:10px; align-items: center;">
+                        <div><label style="margin-top:0;">DE:</label><input type="date" id="filtroInicioPecas" onchange="atualizarRelatorioPecas()"></div>
+                        <div><label style="margin-top:0;">ATÉ:</label><input type="date" id="filtroFimPecas" onchange="atualizarRelatorioPecas()"></div>
+                    </div>
+                </div>
+                <button class="btn-small" style="background:#007bff; height:40px;" onclick="exportarCSV('pecas')">⬇️ EXPORTAR LISTA (EXCEL)</button>
+            </div>
+        </div>
         <div class="card-grid">
             <div class="card" style="border-left-color: #ff4d4d;"><h4>Investimento (Custo das Peças)</h4><p id="pecasCustoTotal">R$ 0,00</p></div>
             <div class="card" style="border-left-color: #4da6ff;"><h4>Faturamento Bruto de Peças</h4><p id="pecasVendaTotal">R$ 0,00</p></div>
             <div class="card" style="border-left-color: #4caf50;"><h4>Lucro Real Exclusivo em Peças</h4><p id="pecasLucroTotal">R$ 0,00</p></div>
         </div>
         <div class="panel">
-            <div style="display:flex; justify-content: space-between; align-items: center;">
-                <h2>Detalhamento por Venda (Apenas OS Efetivadas)</h2>
-                <button class="btn-small" style="background:#007bff; margin-bottom:10px;" onclick="exportarCSV('pecas')">⬇️ EXPORTAR EXCEL</button>
-            </div>
             <table class="table-dark">
                 <thead><tr><th>DATA</th><th>OS Nº</th><th>ITENS VENDIDOS</th><th>CUSTO PAGO</th><th>VALOR VENDIDO</th><th>LUCRO GERADO</th></tr></thead>
                 <tbody id="tabelaDetalhamentoPecas"></tbody>
@@ -397,7 +415,7 @@
                 <div class="card" style="border-left-color: #ffcc00; background: #1e1e24;">
                     <h4 style="color: #ffcc00;">Restaurar Sistema</h4>
                     <p style="font-size:12px; font-weight:normal; margin-top:5px; color:#aaa;">Se você trocou de computador ou limpou o navegador, carregue seu último arquivo aqui.</p>
-                    <input type="file" id="arquivoBackup" accept=".json" style="display:none;" onchange="importarBackup(event)">
+                    <input type="file" id="arquivoBackup" accept=".json" style="display:none;" onchange="importarBackupBlindado(event)">
                     <button class="btn-add" style="background:#ffcc00; color:black; margin-top:15px; height: 47px;" onclick="document.getElementById('arquivoBackup').click()">📂 CARREGAR ARQUIVO DE BACKUP</button>
                 </div>
             </div>
@@ -495,13 +513,13 @@
         },
         sistema: {
             tituloApp: "Gestão Oficial",
-            // COLOQUE O SEU LINK NOVO DO APPS SCRIPT AQUI DENTRO DAS ASPAS:
-            linkPlanilha: "https://script.google.com/macros/s/AKfycbwGL1Q5pOkYDoft2gPA-rrXev7xc__KDCNEwbJ93tzW8zjto5FEdotdnZuWkZqDr0dE/exec",
+            // COLOQUE O SEU LINK DO APPS SCRIPT AQUI DENTRO DAS ASPAS:
+            linkPlanilha: "COLE_O_NOVO_LINK_AQUI_DENTRO",
             valorReserva: 50.00,
             margemExtraPadrao: 1.25, 
             custoPecaPadrao: 0.75
         },
-        equipe: ["JEAN", "VICTOR", "PAJÉ", "ISLAN", "LOURO"],
+        equipe: ["JEAN", "VICTOR", "PAJÉ", "ISLAN", "LOURO", "PAULO"],
         taxas: [
             { nome: "DINHEIRO / PIX", valor: 0.00 },
             { nome: "DÉBITO", valor: 1.52 },
@@ -520,13 +538,28 @@
     };
 
     const LOCAL_DB_KEY = 'agDieselDB_oficial'; 
-    let db = JSON.parse(localStorage.getItem(LOCAL_DB_KEY)) || { clientes: {}, vendas: [], agenda: [], proximaOS: 1 };
+    let db;
+
+    // INICIALIZAÇÃO BLINDADA DO BANCO DE DADOS
+    try {
+        let savedData = localStorage.getItem(LOCAL_DB_KEY);
+        if (savedData) {
+            if (savedData.startsWith('"') && savedData.endsWith('"')) {
+                savedData = savedData.substring(1, savedData.length - 1).replace(/\\"/g, '"').replace(/""/g, '"');
+            }
+            db = JSON.parse(savedData);
+            if (typeof db === 'string') db = JSON.parse(db); 
+        }
+    } catch(e) { console.error("Erro ao ler banco local. Iniciando banco vazio."); }
+
+    if (!db || typeof db !== 'object') db = { clientes: {}, vendas: [], agenda: [], proximaOS: 1 };
     if (!db.proximaOS) db.proximaOS = 1; 
     if (!db.agenda) db.agenda = [];
-    
-    let ultimaOSGerada = null;
+    if (!db.vendas) db.vendas = [];
+    if (!db.clientes) db.clientes = {};
+
     let usuarioLogado = null; 
-    let osSendoEditada = null; 
+    let osSendoEditada = null;
     let pecasTmp = [];
     let qrcodeObj = null;
     let chartFatInst = null;
@@ -540,7 +573,6 @@
     function fazerLogin() {
         const u = document.getElementById('loginUser').value.toLowerCase().trim();
         const p = document.getElementById('loginPass').value;
-        
         const userEncontrado = CONFIG.usuarios.find(x => x.user === u && x.pass === p);
         
         if (userEncontrado) {
@@ -564,32 +596,94 @@
             abasRestritas.forEach(aba => aba.classList.add('locked-tab'));
         }
         
+        configurarDatasSemanais(); 
         openTab('aba-os');
     }
 
-    function sairSistema() {
-        usuarioLogado = null;
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('appContainer').style.display = 'none';
-        document.getElementById('loginPass').value = '';
-        showToast("Você saiu do sistema", "info");
-    }
+    function sairSistema() { location.reload(); }
 
     document.getElementById('loginPass').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') fazerLogin();
     });
 
     // =========================================================================
-    // ☁️ BACKUP SILENCIOSO NA NUVEM
+    // 📅 CONTROLE DE DATAS SEMANAIS
+    // =========================================================================
+    function configurarDatasSemanais() {
+        const hoje = new Date();
+        const diaSemana = hoje.getDay(); 
+        const diffSeg = hoje.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+        const diffSab = diffSeg + 5;
+
+        const segunda = new Date(hoje.setDate(diffSeg)).toISOString().split('T')[0];
+        const sabado = new Date(hoje.setDate(diffSab)).toISOString().split('T')[0];
+
+        ['filtroInicioDRE', 'filtroInicioPecas'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) el.value = segunda;
+        });
+        ['filtroFimDRE', 'filtroFimPecas'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) el.value = sabado;
+        });
+    }
+
+    // =========================================================================
+    // ☁️ BACKUP SILENCIOSO E IMPORTAÇÃO
     // =========================================================================
     function backupAutomaticoNuvem() {
         if(CONFIG.sistema.linkPlanilha === "COLE_O_NOVO_LINK_AQUI_DENTRO") return;
-
         const payload = { tipo: 'BACKUP', bancoDeDados: localStorage.getItem(LOCAL_DB_KEY) };
-
         fetch(CONFIG.sistema.linkPlanilha, {
             method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
         }).then(() => console.log("Backup enviado.")).catch(err => console.error("Erro no backup:", err));
+    }
+
+    function importarBackupBlindado(event) {
+        let file = event.target.files[0];
+        if(!file) return;
+        let reader = new FileReader();
+        reader.onload = e => {
+            if(confirm("Isso substituirá os dados atuais. Confirmar?")) {
+                try {
+                    let rawData = e.target.result.trim();
+                    if(rawData.startsWith('"') && rawData.endsWith('"')) {
+                        rawData = rawData.substring(1, rawData.length - 1).replace(/\\"/g, '"').replace(/""/g, '"');
+                    }
+                    let parsedData = JSON.parse(rawData);
+                    if(typeof parsedData === 'string') parsedData = JSON.parse(parsedData);
+                    
+                    if(!parsedData.clientes || !parsedData.vendas) throw new Error("Formato inválido");
+                    
+                    localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(parsedData)); 
+                    location.reload();
+                } catch(err) {
+                    showToast("ERRO: O arquivo não é válido ou está corrompido.", "error");
+                }
+            }
+            document.getElementById('arquivoBackup').value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    function sincronizarPlanilha() {
+        if(CONFIG.sistema.linkPlanilha === "COLE_O_NOVO_LINK_AQUI_DENTRO") return showToast("Configure o link da planilha!", "error");
+        
+        const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status === 'OS');
+        if(pendentes.length === 0) return showToast("Nada pendente.", "info");
+        
+        // ENVIA MODELO NO CAMPO PLACA PARA IDENTIFICAÇÃO FÁCIL
+        fetch(CONFIG.sistema.linkPlanilha, { 
+            method: 'POST', mode: 'no-cors', 
+            body: JSON.stringify(pendentes.map(v => ({ 
+                data: v.data, mecanico: v.mecanico, placa: v.modelo, cliente: v.cliente, valor: v.maoObraOriginal.toFixed(2).replace('.', ',') 
+            }))) 
+        }).then(() => {
+            pendentes.forEach(v => v.sincronizado = true);
+            localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+            showToast("Planilha Atualizada!", "success");
+            atualizarDashboard();
+        });
     }
 
     // =========================================================================
@@ -759,7 +853,7 @@
         document.getElementById('telCliente').value = os.tel;
         document.getElementById('marca').value = os.marca;
         document.getElementById('modelo').value = os.modelo;
-        document.getElementById('placa').value = os.placa.replace('-', ''); 
+        document.getElementById('placa').value = (os.placa || '').replace('-', ''); 
         document.getElementById('ano').value = os.ano;
         document.getElementById('cor').value = os.cor;
         document.getElementById('km').value = os.km;
@@ -786,7 +880,7 @@
         openTab('aba-os'); 
         document.getElementById('uiTituloPainel').innerText = "✏️ EDITANDO DOC: " + osNum;
         document.getElementById('uiTituloPainel').style.color = "#ffcc00"; 
-        showToast("Modo de Edição Ativado: " + osNum, "info");
+        showToast("Modo de Edição Ativado", "info");
     }
 
     const bancoCarros = {
@@ -1048,10 +1142,8 @@
         const statusIds = { "ORÇAMENTO": "kb-orcamento", "AGUARDANDO PEÇAS": "kb-pecas", "EM SERVIÇO": "kb-servico", "PRONTO": "kb-pronto", "ENTREGUE": "kb-entregue" };
         Object.values(statusIds).forEach(id => document.getElementById(id).innerHTML = '');
 
-        // Pega o que o usuário digitou na barra de pesquisa
         let termoBusca = document.getElementById('buscaKanban') ? document.getElementById('buscaKanban').value.toUpperCase().trim() : '';
 
-        // Pega a lista com as 15 últimas entregues para não congestionar a tela quando não estiver pesquisando
         let todasEntregues = db.vendas.filter(v => (v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO')) === 'ENTREGUE');
         let ultimasEntregues = todasEntregues.slice(-15).map(v => v.osNum);
 
@@ -1060,12 +1152,9 @@
             const colId = statusIds[fase];
             if(!colId) return;
 
-            // Lógica do Filtro Inteligente
             if (termoBusca) {
-                // Se digitou algo, procura na Placa ou no Nome do Cliente. Se não bater, pula esse card.
-                if (!v.placa.includes(termoBusca) && !v.cliente.includes(termoBusca)) return;
+                if ((!v.placa || !v.placa.includes(termoBusca)) && (!v.cliente || !v.cliente.includes(termoBusca))) return;
             } else {
-                // Se a barra estiver vazia, esconde os serviços antigos da coluna ENTREGUE para limpar o visual
                 if (fase === 'ENTREGUE' && !ultimasEntregues.includes(v.osNum)) return;
             }
 
@@ -1075,8 +1164,8 @@
             const card = document.createElement('div');
             card.className = 'kanban-card';
             card.innerHTML = `
-                <h4>${v.placa} - ${v.modelo}</h4>
-                <p>Cliente: ${v.cliente}</p>
+                <h4>${v.placa || '-'} - ${v.modelo || '-'}</h4>
+                <p>Cliente: ${v.cliente || 'NÃO INFORMADO'}</p>
                 <p>Garantia: <span style="color:${corGarantia}; font-weight:bold;">${dias}d / 90d</span></p>
                 <div class="card-footer">
                     <button class="btn-small" style="background:#444" onclick="moverFase('${v.osNum}', -1)">◀</button>
@@ -1187,9 +1276,10 @@
         let faturamento = 0, custoPecas = 0, comissaoMec = 0, taxas = 0;
         let htmlDRE = '';
 
-        db.vendas.forEach(v => {
-            if (v.status === 'ORÇAMENTO') return; 
+        let ini = document.getElementById('filtroInicioDRE') ? new Date(document.getElementById('filtroInicioDRE').value + "T00:00:00").getTime() : 0;
+        let fim = document.getElementById('filtroFimDRE') ? new Date(document.getElementById('filtroFimDRE').value + "T23:59:59").getTime() : Infinity;
 
+        db.vendas.filter(v => v.status === 'OS' && v.timestamp >= ini && v.timestamp <= fim).forEach(v => {
             faturamento += v.faturamento;
             custoPecas += (v.custoTotalPecas || 0);
             comissaoMec += (v.maoObraOriginal * 0.4);
@@ -1215,13 +1305,13 @@
 
     function atualizarPainelMO() {
         let moTotal = 0, moMecanico = 0, moOficina = 0, htmlMecanicos = '';
-        let inicioMs = document.getElementById('filtroInicioMO').value ? new Date(document.getElementById('filtroInicioMO').value + "T00:00:00").getTime() : 0;
-        let fimMs = document.getElementById('filtroFimMO').value ? new Date(document.getElementById('filtroFimMO').value + "T23:59:59").getTime() : Infinity;
+        let inicioMs = document.getElementById('filtroInicioMO') && document.getElementById('filtroInicioMO').value ? new Date(document.getElementById('filtroInicioMO').value + "T00:00:00").getTime() : 0;
+        let fimMs = document.getElementById('filtroFimMO') && document.getElementById('filtroFimMO').value ? new Date(document.getElementById('filtroFimMO').value + "T23:59:59").getTime() : Infinity;
 
         db.vendas.filter(v => v.status === 'OS' && v.timestamp >= inicioMs && v.timestamp <= fimMs && v.mecanico && v.maoObraOriginal > 0).forEach(v => {
             let valMec = v.maoObraOriginal * 0.40;
             moTotal += v.maoObraOriginal; moMecanico += valMec; moOficina += (v.maoObraOriginal * 0.60);
-            htmlMecanicos += `<tr><td>${v.mecanico}</td><td>${v.placa}</td><td style="color:#fff;">${formatarBRL(v.maoObraOriginal)}</td><td style="color:#ffcc00;">${formatarBRL(valMec)}</td><td>${v.sincronizado ? '✔️' : '⏳'}</td></tr>`;
+            htmlMecanicos += `<tr><td>${v.mecanico}</td><td>${v.modelo || '-'}</td><td style="color:#fff;">${formatarBRL(v.maoObraOriginal)}</td><td style="color:#ffcc00;">${formatarBRL(valMec)}</td><td>${v.sincronizado ? '✔️' : '⏳'}</td></tr>`;
         });
 
         document.getElementById('tabelaMecanicos').innerHTML = htmlMecanicos;
@@ -1238,7 +1328,10 @@
 
     function atualizarRelatorioPecas() {
         let cTotal = 0, vTotal = 0, lTotal = 0, htmlPecas = '';
-        db.vendas.filter(v => v.status === 'OS' && v.pecasFinal && v.pecasFinal.length > 0).forEach(v => {
+        let ini = document.getElementById('filtroInicioPecas') ? new Date(document.getElementById('filtroInicioPecas').value + "T00:00:00").getTime() : 0;
+        let fim = document.getElementById('filtroFimPecas') ? new Date(document.getElementById('filtroFimPecas').value + "T23:59:59").getTime() : Infinity;
+
+        db.vendas.filter(v => v.status === 'OS' && v.timestamp >= ini && v.timestamp <= fim && v.pecasFinal && v.pecasFinal.length > 0).forEach(v => {
             let cOS = v.custoTotalPecas || 0, vOS = v.vendaTotalPecas || 0, lOS = vOS - cOS;
             cTotal += cOS; vTotal += vOS; lTotal += lOS;
             htmlPecas += `<tr><td>${v.data}</td><td>${v.osNum}</td><td>${v.itensResumo}</td><td style="color:#ff4d4d">${formatarBRL(cOS)}</td><td style="color:#4da6ff">${formatarBRL(vOS)}</td><td style="color:#4caf50; font-weight:bold;">${formatarBRL(lOS)}</td></tr>`;
@@ -1257,13 +1350,13 @@
         
         db.vendas.filter(v => v.status === 'OS').forEach(v => {
             if(!clientesMap[v.tel]) clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp };
-            clientesMap[v.tel].veiculos.add(`${v.marca} ${v.modelo} (${v.placa})`);
+            clientesMap[v.tel].veiculos.add(`${v.marca || ''} ${v.modelo || ''} (${v.placa || ''})`);
             if(v.timestamp > clientesMap[v.tel].ultimaData) clientesMap[v.tel].ultimaData = v.timestamp;
         });
 
         Object.values(db.clientes).forEach(c => {
             if(!clientesMap[c.tel]) {
-                clientesMap[c.tel] = { nome: c.nome, veiculos: new Set([`${c.marca||''} ${c.modelo||''} (${c.placa})`]), ultimaData: 0 };
+                clientesMap[c.tel] = { nome: c.nome, veiculos: new Set([`${c.marca||''} ${c.modelo||''} (${c.placa||''})`]), ultimaData: 0 };
             }
         });
 
@@ -1274,7 +1367,7 @@
             let badgeDias = c.ultimaData > 0 ? (dias > 180 ? `<span class="badge-warning">Falta há ${dias} dias</span>` : `<span class="badge-ok">Veio há ${dias} dias</span>`) : '';
             
             let placaExemplo = Array.from(c.veiculos)[0].match(/\((.*?)\)/);
-            let placaEdit = placaExemplo ? placaExemplo[1].replace('-','') : '';
+            let placaEdit = placaExemplo && placaExemplo[1] ? placaExemplo[1].replace('-','') : '';
 
             html += `<tr style="border-bottom: 1px solid #333;">
                 <td>${c.nome}</td><td>${tel}</td><td>${Array.from(c.veiculos).join(', ')}</td>
@@ -1297,6 +1390,7 @@
     }
 
     function abrirEditarCliente(placaKey) {
+        if(!placaKey) return showToast("Placa não encontrada.", "error");
         let c = db.clientes[placaKey];
         if(!c) return showToast("Dados não encontrados.", "error");
         document.getElementById('tituloModalCliente').innerText = "✏️ Editar Cadastro do Veículo";
@@ -1341,14 +1435,21 @@
         window.open(`https://wa.me/${telLimpo}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
+    // =========================================================
+    // EXPORTAR E BACKUP GERAL
+    // =========================================================
     function exportarCSV(tipo) {
         let csv = [];
         if(tipo === 'financeiro') {
             csv.push("DATA;OS;PLACA;VALOR_MAQUINA;TAXA_BANCO;RESERVA_RETIDA;LUCRO_LIQUIDO");
-            db.vendas.filter(v => v.status === 'OS').forEach(v => csv.push(`${v.data};${v.osNum};${v.placa};${v.faturamento.toFixed(2).replace('.',',')};${(v.taxaMaq||0).toFixed(2).replace('.',',')};${v.reserva.toFixed(2).replace('.',',')};${v.lucro.toFixed(2).replace('.',',')}`));
+            let ini = document.getElementById('filtroInicioDRE') ? new Date(document.getElementById('filtroInicioDRE').value + "T00:00:00").getTime() : 0;
+            let fim = document.getElementById('filtroFimDRE') ? new Date(document.getElementById('filtroFimDRE').value + "T23:59:59").getTime() : Infinity;
+            db.vendas.filter(v => v.status === 'OS' && v.timestamp >= ini && v.timestamp <= fim).forEach(v => csv.push(`${v.data};${v.osNum};${v.placa};${v.faturamento.toFixed(2).replace('.',',')};${(v.taxaMaq||0).toFixed(2).replace('.',',')};${v.reserva.toFixed(2).replace('.',',')};${v.lucro.toFixed(2).replace('.',',')}`));
         } else {
             csv.push("DATA;OS;ITENS;CUSTO;VENDA;LUCRO");
-            db.vendas.filter(v => v.status === 'OS' && v.pecasFinal).forEach(v => csv.push(`${v.data};${v.osNum};"${v.itensResumo}";${(v.custoTotalPecas||0).toFixed(2).replace('.',',')};${(v.vendaTotalPecas||0).toFixed(2).replace('.',',')};${((v.vendaTotalPecas||0)-(v.custoTotalPecas||0)).toFixed(2).replace('.',',')}`));
+            let ini = document.getElementById('filtroInicioPecas') ? new Date(document.getElementById('filtroInicioPecas').value + "T00:00:00").getTime() : 0;
+            let fim = document.getElementById('filtroFimPecas') ? new Date(document.getElementById('filtroFimPecas').value + "T23:59:59").getTime() : Infinity;
+            db.vendas.filter(v => v.status === 'OS' && v.timestamp >= ini && v.timestamp <= fim && v.pecasFinal).forEach(v => csv.push(`${v.data};${v.osNum};"${v.itensResumo}";${(v.custoTotalPecas||0).toFixed(2).replace('.',',')};${(v.vendaTotalPecas||0).toFixed(2).replace('.',',')};${((v.vendaTotalPecas||0)-(v.custoTotalPecas||0)).toFixed(2).replace('.',',')}`));
         }
         let a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob(["\uFEFF" + csv.join('\n')], { type: 'text/csv;charset=utf-8;' }));
@@ -1360,33 +1461,6 @@
         a.href = URL.createObjectURL(new Blob([localStorage.getItem(LOCAL_DB_KEY)], {type: "application/json"}));
         a.download = `Backup_Sistema_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.json`; a.click();
         showToast("Backup gerado com sucesso!", "success");
-    }
-
-    function importarBackup(event) {
-        let reader = new FileReader();
-        reader.onload = e => {
-            if(confirm("Isso substituirá os dados atuais. Confirmar?")) {
-                localStorage.setItem(LOCAL_DB_KEY, e.target.result); location.reload();
-            }
-        };
-        reader.readAsText(event.target.files[0]);
-    }
-
-    function sincronizarPlanilha() {
-        if(CONFIG.sistema.linkPlanilha === "COLE_O_NOVO_LINK_AQUI_DENTRO") {
-            return showToast("Configure o link do Google Apps Script!", "error");
-        }
-
-        const pendentes = db.vendas.filter(v => v.mecanico && v.maoObraOriginal > 0 && !v.sincronizado && v.status === 'OS');
-        if(pendentes.length === 0) return showToast("Nenhuma pendência para enviar!", "info");
-        
-        const btnSync = document.querySelector('.btn-sync'); btnSync.innerText = "⏳ ENVIANDO...";
-        fetch(CONFIG.sistema.linkPlanilha, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pendentes.map(v => ({ data: v.data, mecanico: v.mecanico, placa: v.placa, cliente: v.cliente, valor: v.maoObraOriginal.toFixed(2).replace('.', ',') }))) })
-        .then(() => {
-            pendentes.forEach(v => v.sincronizado = true); localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
-            btnSync.innerText = "✔️ ENVIADOS!"; setTimeout(() => { btnSync.innerText = "☁️ ENVIAR PENDENTES"; }, 3000); atualizarDashboard();
-            showToast("Sincronizado com a planilha!", "success");
-        }).catch(() => { showToast("Erro de conexão.", "error"); btnSync.innerText = "☁️ TENTAR NOVAMENTE"; });
     }
 </script>
 </body>
