@@ -263,7 +263,10 @@
 
     <div id="aba-historico" class="tab-content">
         <div class="panel">
-            <h2>Pátio Digital (Gestão de Fluxo)</h2>
+            <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 style="border:none; margin:0; padding:0;">Pátio Digital (Gestão de Fluxo)</h2>
+                <input type="text" id="buscaKanban" placeholder="🔍 Buscar Cliente ou Placa..." style="max-width: 300px; margin:0;" oninput="renderKanban()">
+            </div>
             <div class="kanban-board">
                 <div class="kanban-col" style="border-top-color: #ff9800;"><h3>ORÇAMENTOS</h3><div class="kanban-list" id="kb-orcamento"></div></div>
                 <div class="kanban-col" style="border-top-color: #007bff;"><h3>AGUARDANDO PEÇAS</h3><div class="kanban-list" id="kb-pecas"></div></div>
@@ -486,7 +489,7 @@
             nome: "AG Diesel",
             cnpj: "10.488.157/0001-61", 
             endereco: "Av Luis Pio, 64",
-            cidade: "Eusébio/CE",
+            cidade: "Eusebio/CE",
             telefone: "5585994190644", 
             logo: "" 
         },
@@ -523,7 +526,7 @@
     
     let ultimaOSGerada = null;
     let usuarioLogado = null; 
-    let osSendoEditada = null; // Variavel global para o modo Edição
+    let osSendoEditada = null; 
     let pecasTmp = [];
     let qrcodeObj = null;
     let chartFatInst = null;
@@ -730,7 +733,7 @@
             
             pecasTmp = [];
             ultimaOSGerada = null; 
-            osSendoEditada = null; // Zera a edição
+            osSendoEditada = null; 
             
             renderPecas();
             document.getElementById('resumoFinanceiro').style.display = 'none';
@@ -763,7 +766,6 @@
         document.getElementById('nomeMecanico').value = os.mecanico;
         document.getElementById('maoDeObra').value = os.maoObraOriginal > 0 ? os.maoObraOriginal.toFixed(2).replace('.', ',') : '';
 
-        // Desmarca margem e reserva para evitar cobrança duplicada na edição
         document.getElementById('aplicarMargem').checked = false;
         document.getElementById('aplicarReserva').checked = false;
 
@@ -953,18 +955,16 @@
             taxaMaq: valorDescontadoMaquina, reserva: reserva, lucro: lucroReal, sincronizado: false 
         };
 
-        // LÓGICA DE SALVAR/EDITAR
         if (osSendoEditada) {
             const index = db.vendas.findIndex(v => v.osNum === osSendoEditada);
             if (index !== -1) {
-                osData.osNum = osSendoEditada; // Mantem o numero original
-                osData.timestamp = db.vendas[index].timestamp; // Mantem a data original do doc
-                osData.fase = db.vendas[index].fase; // Mantem no mesmo card do Kanban
-                // Se era orcamento e virou OS, avança de fase
+                osData.osNum = osSendoEditada; 
+                osData.timestamp = db.vendas[index].timestamp; 
+                osData.fase = db.vendas[index].fase; 
                 if(osData.status === 'OS' && db.vendas[index].status === 'ORÇAMENTO') osData.fase = 'EM SERVIÇO';
                 db.vendas[index] = osData;
             }
-            osSendoEditada = null; // Encerra a edição
+            osSendoEditada = null; 
             document.getElementById('uiTituloPainel').innerText = "Módulo de OS";
             document.getElementById('uiTituloPainel').style.color = "#ff4d4d";
         } else {
@@ -1026,42 +1026,48 @@
         if(!osSelecionada) return showToast("Nenhum documento encontrado.", "error");
 
         let telefoneCliente = osSelecionada.tel.replace(/\D/g, ''); 
-        if(telefoneCliente.length < 10) {
-            let numCorrigido = prompt("O telefone não tem o DDD. Digite com DDD (Ex: 85999999999):", telefoneCliente);
-            if(numCorrigido) telefoneCliente = numCorrigido.replace(/\D/g, '');
-            else return;
-        }
         if(!telefoneCliente.startsWith('55')) telefoneCliente = '55' + telefoneCliente;
 
         let tipoDocStr = osSelecionada.status === 'ORÇAMENTO' ? 'Orçamento' : 'Ordem de Serviço';
-        let tituloSaudacao = osSelecionada.status === 'ORÇAMENTO' ? "Aqui está o orçamento que você solicitou." : "Aqui está o resumo da sua Ordem de Serviço concluída.";
         
-        let msg = `Olá, *${osSelecionada.cliente}*!\n${tituloSaudacao}\n\n*${CONFIG.empresa.nome}*\n-----------------------------------\n*Doc:* ${osSelecionada.osNum} (${tipoDocStr})\n*Veículo:* ${osSelecionada.marca} ${osSelecionada.modelo} (${osSelecionada.placa})\n-----------------------------------\n\n*Mão de Obra:* ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
-        
-        if(osSelecionada.pecasFinal && osSelecionada.pecasFinal.length > 0) {
-            msg += `\n*Peças:*\n`;
-            osSelecionada.pecasFinal.forEach(p => { msg += `- ${p.qtd}x ${p.nome} (${formatarBRL(p.total)})\n`; });
-        }
-        msg += `\n-----------------------------------\n*TOTAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
-        if(osSelecionada.condPag) msg += `*Forma Pgto:* ${osSelecionada.condPag.replace('PAGAMENTO VIA ', '').replace('*', '').trim()}\n`;
-        
-        if(osSelecionada.status === 'ORÇAMENTO') msg += `\n_Para autorizar, responda com_ *"EU APROVO"*.\n`;
-        else msg += `\n_Garantia de 90 dias. Guarde esta mensagem._\n`;
-        
+        let msg = `Olá, *${osSelecionada.cliente}*!\nSegue o resumo do seu atendimento na *AG Diesel*.\n\n`;
+        msg += `*Doc:* ${osSelecionada.osNum} (${tipoDocStr})\n`;
+        msg += `*Veículo:* ${osSelecionada.marca} ${osSelecionada.modelo} (${osSelecionada.placa})\n`;
+        msg += `-----------------------------------\n`;
+        msg += `*TOTAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
+        msg += `-----------------------------------\n\n`;
+        msg += `_Estou gerando o documento completo em PDF e já te envio abaixo 👇_`;
+
         window.open(`https://wa.me/${telefoneCliente}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     // =========================================================
-    // 🚀 LÓGICA DO PÁTIO KANBAN E BOTÕES
+    // 🚀 LÓGICA DO PÁTIO KANBAN COM PESQUISA
     // =========================================================
     function renderKanban() {
         const statusIds = { "ORÇAMENTO": "kb-orcamento", "AGUARDANDO PEÇAS": "kb-pecas", "EM SERVIÇO": "kb-servico", "PRONTO": "kb-pronto", "ENTREGUE": "kb-entregue" };
         Object.values(statusIds).forEach(id => document.getElementById(id).innerHTML = '');
 
-        db.vendas.slice(-50).forEach(v => {
+        // Pega o que o usuário digitou na barra de pesquisa
+        let termoBusca = document.getElementById('buscaKanban') ? document.getElementById('buscaKanban').value.toUpperCase().trim() : '';
+
+        // Pega a lista com as 15 últimas entregues para não congestionar a tela quando não estiver pesquisando
+        let todasEntregues = db.vendas.filter(v => (v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO')) === 'ENTREGUE');
+        let ultimasEntregues = todasEntregues.slice(-15).map(v => v.osNum);
+
+        db.vendas.forEach(v => {
             const fase = v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO');
             const colId = statusIds[fase];
             if(!colId) return;
+
+            // Lógica do Filtro Inteligente
+            if (termoBusca) {
+                // Se digitou algo, procura na Placa ou no Nome do Cliente. Se não bater, pula esse card.
+                if (!v.placa.includes(termoBusca) && !v.cliente.includes(termoBusca)) return;
+            } else {
+                // Se a barra estiver vazia, esconde os serviços antigos da coluna ENTREGUE para limpar o visual
+                if (fase === 'ENTREGUE' && !ultimasEntregues.includes(v.osNum)) return;
+            }
 
             const dias = Math.floor((Date.now() - v.timestamp) / (1000 * 60 * 60 * 24));
             const corGarantia = dias <= 90 ? '#4caf50' : '#f44336';
