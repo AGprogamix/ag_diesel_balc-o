@@ -34,7 +34,7 @@
         .panel-flex { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
         .panel-col { flex: 1; min-width: 320px; }
 
-        h2 { color: #ff4d4d; margin-top: 0; font-size: 1.4em; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; }
+        h2 { margin-top: 0; font-size: 1.4em; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; }
         h3 { color: #b3b3b3; font-size: 1.1em; margin-bottom: 10px; }
         label { display: block; margin-top: 10px; font-weight: 600; font-size: 12px; color: #aaa; }
         input, select, textarea { width: 100%; padding: 10px; margin-top: 4px; border-radius: 4px; border: 1px solid #4a4a5a; background: #1e1e24; color: #fff; font-size: 13px; box-sizing: border-box; text-transform: uppercase; }
@@ -65,7 +65,7 @@
         .kanban-card { background: #2b2b36; border: 1px solid #3f3f4e; padding: 12px; border-radius: 6px; margin-bottom: 10px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .kanban-card h4 { margin: 0 0 5px 0; font-size: 13px; color: #fff; }
         .kanban-card p { margin: 0; font-size: 11px; color: #aaa; }
-        .kanban-card .card-footer { display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid #333; padding-top: 8px; }
+        .kanban-card .card-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px; margin-top: 10px; border-top: 1px solid #333; padding-top: 8px; }
         
         /* DASHBOARD CARDS E GRÁFICOS */
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -176,7 +176,7 @@
         <div class="panel-flex">
             
             <div class="panel-col panel" style="max-width: 480px;">
-                <h2 id="uiTituloPainel">Módulo de OS</h2>
+                <h2 id="uiTituloPainel" style="color: #ff4d4d;">Módulo de OS</h2>
                 
                 <div class="input-group" style="background: #331414; border-color: #ff4d4d;">
                     <h3 style="color: #ff4d4d;">Tipo de Documento</h3>
@@ -295,7 +295,6 @@
     </div>
 
     <div id="aba-financeiro" class="tab-content">
-        
         <div class="panel-flex" style="margin-bottom: 20px;">
             <div class="panel-col panel" style="background: #23232c; max-width: 60%;">
                 <h3 style="color:#aaa; text-align:center; margin-top:0;">Faturamento vs Lucro (Últimas Vendas)</h3>
@@ -485,16 +484,16 @@
     const CONFIG = {
         empresa: {
             nome: "AG Diesel",
-            cnpj: "10.488.157/0001-61", 
+            cnpj: "00.000.000/0001-00", 
             endereco: "Fortaleza - CE",
             cidade: "Fortaleza/CE",
-            telefone: "5585994190644", 
+            telefone: "5585999999999", 
             logo: "" 
         },
         sistema: {
             tituloApp: "Gestão Oficial",
             // COLOQUE O SEU LINK NOVO DO APPS SCRIPT AQUI DENTRO DAS ASPAS:
-            linkPlanilha: "https://script.google.com/macros/s/AKfycbwGL1Q5pOkYDoft2gPA-rrXev7xc__KDCNEwbJ93tzW8zjto5FEdotdnZuWkZqDr0dE/exec",
+            linkPlanilha: "COLE_O_NOVO_LINK_AQUI_DENTRO",
             valorReserva: 50.00,
             margemExtraPadrao: 1.25, 
             custoPecaPadrao: 0.75
@@ -517,7 +516,6 @@
         ]
     };
 
-    // Chave de salvamento local específica da AG Diesel
     const LOCAL_DB_KEY = 'agDieselDB_oficial'; 
     let db = JSON.parse(localStorage.getItem(LOCAL_DB_KEY)) || { clientes: {}, vendas: [], agenda: [], proximaOS: 1 };
     if (!db.proximaOS) db.proximaOS = 1; 
@@ -525,6 +523,7 @@
     
     let ultimaOSGerada = null;
     let usuarioLogado = null; 
+    let osSendoEditada = null; // Variavel global para o modo Edição
     let pecasTmp = [];
     let qrcodeObj = null;
     let chartFatInst = null;
@@ -583,21 +582,11 @@
     function backupAutomaticoNuvem() {
         if(CONFIG.sistema.linkPlanilha === "COLE_O_NOVO_LINK_AQUI_DENTRO") return;
 
-        const payload = {
-            tipo: 'BACKUP',
-            bancoDeDados: localStorage.getItem(LOCAL_DB_KEY)
-        };
+        const payload = { tipo: 'BACKUP', bancoDeDados: localStorage.getItem(LOCAL_DB_KEY) };
 
         fetch(CONFIG.sistema.linkPlanilha, {
-            method: 'POST',
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        }).then(() => {
-            console.log("Backup enviado em segundo plano.");
-        }).catch(err => {
-            console.error("Erro no backup silencioso:", err);
-        });
+            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        }).then(() => console.log("Backup enviado.")).catch(err => console.error("Erro no backup:", err));
     }
 
     // =========================================================================
@@ -609,10 +598,7 @@
         toast.className = `toast ${type} show`;
         toast.innerText = msg;
         container.appendChild(toast);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
     function renderGraficos() {
@@ -643,14 +629,12 @@
         if(!qrcodeObj) {
             let telZap = CONFIG.empresa.telefone.replace(/\D/g, '');
             if(!telZap.startsWith('55')) telZap = '55' + telZap;
-            qrcodeObj = new QRCode(document.getElementById("qrcodePrint"), {
-                text: `https://wa.me/${telZap}`, width: 60, height: 60, colorDark : "#000", colorLight : "#fff", correctLevel : QRCode.CorrectLevel.L
-            });
+            qrcodeObj = new QRCode(document.getElementById("qrcodePrint"), { text: `https://wa.me/${telZap}`, width: 60, height: 60, colorDark : "#000", colorLight : "#fff", correctLevel : QRCode.CorrectLevel.L });
         }
     }
 
     document.addEventListener('input', e => {
-        if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+        if (e.target.tagName === 'INPUT' && e.target.type === 'text' && e.target.id !== 'loginUser' && e.target.id !== 'loginPass') {
             const start = e.target.selectionStart;
             e.target.value = e.target.value.toUpperCase();
             e.target.setSelectionRange(start, start);
@@ -666,7 +650,7 @@
 
     window.onload = function() {
         document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
-        document.getElementById('uiTituloPainel').innerText = CONFIG.empresa.nome + " - Módulo de OS";
+        document.getElementById('uiTituloPainel').innerText = "Módulo de OS";
         document.getElementById('docCnpjEndereco').innerText = CONFIG.empresa.cnpj + " | " + CONFIG.empresa.endereco;
         document.getElementById('docCidadeTel').innerText = CONFIG.empresa.cidade + " | Tel.: " + CONFIG.empresa.telefone;
         document.getElementById('uiLabelReserva').innerText = `DILUIR R$ ${CONFIG.sistema.valorReserva.toFixed(2).replace('.', ',')} DE RESERVA`;
@@ -741,14 +725,66 @@
         if(confirm("Deseja limpar os dados da tela?")) {
             ['nomeCliente','telCliente','marca','modelo','placa','ano','cor','km','nomeMecanico','maoDeObra'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('repassarTaxa').checked = true;
+            document.getElementById('aplicarMargem').checked = true;
+            document.getElementById('aplicarReserva').checked = true;
+            
             pecasTmp = [];
             ultimaOSGerada = null; 
+            osSendoEditada = null; // Zera a edição
+            
             renderPecas();
             document.getElementById('resumoFinanceiro').style.display = 'none';
             document.getElementById('acoesPosGeracao').style.display = 'none';
+            document.getElementById('uiTituloPainel').innerText = "Módulo de OS";
+            document.getElementById('uiTituloPainel').style.color = "#ff4d4d";
             document.getElementById('nomeCliente').focus();
             showToast("Tela limpa para novo atendimento", "info");
         }
+    }
+
+    // =========================================================
+    // ✏️ LÓGICA DE EDIÇÃO DE OS/ORÇAMENTO
+    // =========================================================
+    function carregarOSParaEdicao(osNum) {
+        const os = db.vendas.find(v => v.osNum === osNum);
+        if (!os) return showToast("Documento não encontrado.", "error");
+
+        osSendoEditada = osNum; 
+        
+        document.getElementById('tipoDocumento').value = os.status;
+        document.getElementById('nomeCliente').value = os.cliente;
+        document.getElementById('telCliente').value = os.tel;
+        document.getElementById('marca').value = os.marca;
+        document.getElementById('modelo').value = os.modelo;
+        document.getElementById('placa').value = os.placa.replace('-', ''); 
+        document.getElementById('ano').value = os.ano;
+        document.getElementById('cor').value = os.cor;
+        document.getElementById('km').value = os.km;
+        document.getElementById('nomeMecanico').value = os.mecanico;
+        document.getElementById('maoDeObra').value = os.maoObraOriginal > 0 ? os.maoObraOriginal.toFixed(2).replace('.', ',') : '';
+
+        // Desmarca margem e reserva para evitar cobrança duplicada na edição
+        document.getElementById('aplicarMargem').checked = false;
+        document.getElementById('aplicarReserva').checked = false;
+
+        pecasTmp = [];
+        if(os.pecasFinal) {
+            os.pecasFinal.forEach(p => {
+                pecasTmp.push({
+                    id: Date.now() + Math.random(),
+                    nome: p.nome,
+                    qtd: p.qtd,
+                    tabelaUnit: p.unit, 
+                    custoUnit: p.unit * CONFIG.sistema.custoPecaPadrao 
+                });
+            });
+        }
+
+        renderPecas();
+        openTab('aba-os'); 
+        document.getElementById('uiTituloPainel').innerText = "✏️ EDITANDO DOC: " + osNum;
+        document.getElementById('uiTituloPainel').style.color = "#ffcc00"; 
+        showToast("Modo de Edição Ativado: " + osNum, "info");
     }
 
     const bancoCarros = {
@@ -917,8 +953,24 @@
             taxaMaq: valorDescontadoMaquina, reserva: reserva, lucro: lucroReal, sincronizado: false 
         };
 
-        db.vendas.push(osData);
-        db.proximaOS++; 
+        // LÓGICA DE SALVAR/EDITAR
+        if (osSendoEditada) {
+            const index = db.vendas.findIndex(v => v.osNum === osSendoEditada);
+            if (index !== -1) {
+                osData.osNum = osSendoEditada; // Mantem o numero original
+                osData.timestamp = db.vendas[index].timestamp; // Mantem a data original do doc
+                osData.fase = db.vendas[index].fase; // Mantem no mesmo card do Kanban
+                // Se era orcamento e virou OS, avança de fase
+                if(osData.status === 'OS' && db.vendas[index].status === 'ORÇAMENTO') osData.fase = 'EM SERVIÇO';
+                db.vendas[index] = osData;
+            }
+            osSendoEditada = null; // Encerra a edição
+            document.getElementById('uiTituloPainel').innerText = "Módulo de OS";
+            document.getElementById('uiTituloPainel').style.color = "#ff4d4d";
+        } else {
+            db.vendas.push(osData);
+            db.proximaOS++; 
+        }
         
         db.clientes[placaLimpa.replace('-','')] = { 
             nome: osData.cliente, tel: osData.tel, marca: osData.marca, modelo: osData.modelo, ano: osData.ano, cor: osData.cor, placa: osData.placa 
@@ -934,10 +986,10 @@
             document.getElementById('resTaxaMaq').innerText = formatarBRL(osData.taxaMaq);
             document.getElementById('resLucro').innerText = formatarBRL(osData.lucro);
             document.getElementById('resumoFinanceiro').style.display = 'block';
-            showToast("OS Efetivada com Sucesso!", "success");
+            showToast("OS Salva com Sucesso!", "success");
         } else {
             document.getElementById('resumoFinanceiro').style.display = 'none';
-            showToast("Orçamento Gerado! Doc: " + numOSFormatado, "info");
+            showToast("Orçamento Salvo! Doc: " + osData.osNum, "info");
         }
 
         montarOS(osData);
@@ -1000,7 +1052,7 @@
     }
 
     // =========================================================
-    // 🚀 LÓGICA DO PÁTIO KANBAN
+    // 🚀 LÓGICA DO PÁTIO KANBAN E BOTÕES
     // =========================================================
     function renderKanban() {
         const statusIds = { "ORÇAMENTO": "kb-orcamento", "AGUARDANDO PEÇAS": "kb-pecas", "EM SERVIÇO": "kb-servico", "PRONTO": "kb-pronto", "ENTREGUE": "kb-entregue" };
@@ -1022,10 +1074,11 @@
                 <p>Garantia: <span style="color:${corGarantia}; font-weight:bold;">${dias}d / 90d</span></p>
                 <div class="card-footer">
                     <button class="btn-small" style="background:#444" onclick="moverFase('${v.osNum}', -1)">◀</button>
-                    <div>
-                        <button class="btn-small" style="background:#25D366" onclick="enviarWhatsApp('${v.osNum}')">WPP</button>
-                        <button class="btn-small" onclick="verOSAntiga('${v.osNum}')">VER</button>
-                        <button class="btn-small" style="background:#dc3545" onclick="excluirOS('${v.osNum}')">X</button>
+                    <div style="display:flex; gap: 5px;">
+                        <button class="btn-small" style="background:#25D366" onclick="enviarWhatsApp('${v.osNum}')" title="WhatsApp">WPP</button>
+                        <button class="btn-small" style="background:#ffcc00; color:#000;" onclick="carregarOSParaEdicao('${v.osNum}')" title="Editar">✏️</button>
+                        <button class="btn-small" onclick="verOSAntiga('${v.osNum}')" title="Ver DOC">VER</button>
+                        <button class="btn-small" style="background:#dc3545" onclick="excluirOS('${v.osNum}')" title="Excluir">X</button>
                     </div>
                     <button class="btn-small" style="background:#444" onclick="moverFase('${v.osNum}', 1)">▶</button>
                 </div>
