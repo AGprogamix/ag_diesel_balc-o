@@ -1129,14 +1129,14 @@
         msg += `*Veículo:* ${osSelecionada.marca || ''} ${osSelecionada.modelo || ''} (${osSelecionada.placa})\n`;
         msg += `-----------------------------------\n`;
         
-        // --- ADICIONANDO O DETALHAMENTO DE ITENS ---
+        // --- ADICIONANDO O DETALHAMENTO DE ITENS (FORMATO PROFISSIONAL) ---
         msg += `*DESCRIÇÃO DOS ITENS:*\n`;
         if (osSelecionada.maoObraFinal > 0) {
-            msg += `🔧 Mão de Obra: ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
+            msg += `- Mão de Obra: ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
         }
         if (osSelecionada.pecasFinal && osSelecionada.pecasFinal.length > 0) {
             osSelecionada.pecasFinal.forEach(p => {
-                msg += `📦 ${p.qtd}x ${p.nome}: ${formatarBRL(p.total)}\n`;
+                msg += `- ${p.qtd}x ${p.nome}: ${formatarBRL(p.total)}\n`;
             });
         }
         msg += `-----------------------------------\n`;
