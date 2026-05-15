@@ -870,8 +870,9 @@
                     id: Date.now() + Math.random(),
                     nome: p.nome,
                     qtd: p.qtd,
-                    tabelaUnit: p.unit, 
-                    custoUnit: p.unit * CONFIG.sistema.custoPecaPadrao 
+                    // Puxa o preço limpo original. Se for uma OS antiga que não tinha isso salvo, puxa o unit.
+                    tabelaUnit: p.tabelaUnitOrig || p.unit, 
+                    custoUnit: p.custoUnitOrig || (p.unit * CONFIG.sistema.custoPecaPadrao) 
                 });
             });
         }
@@ -1021,7 +1022,15 @@
             pecasTmp.forEach(p => {
                 let peso = p.vendaTotalBase / totalVendaBase;
                 let valorRateado = p.vendaTotalBase + (acrescimoRateio * peso);
-                arrPecasFinal.push({ nome: p.nome, qtd: p.qtd, unit: valorRateado/p.qtd, total: valorRateado });
+                
+                arrPecasFinal.push({ 
+                    nome: p.nome, 
+                    qtd: p.qtd, 
+                    unit: valorRateado / p.qtd, 
+                    total: valorRateado,
+                    tabelaUnitOrig: p.tabelaUnit, // GRAVA O PREÇO DE TABELA LIMPO INVISÍVEL
+                    custoUnitOrig: p.custoUnit    // GRAVA O CUSTO LIMPO INVISÍVEL
+                });
             });
         } else {
             maoObraFinal += acrescimoRateio;
@@ -1033,7 +1042,7 @@
         if(placaLimpa.length === 7 && !placaLimpa.includes('-')) placaLimpa = placaLimpa.substring(0,3) + '-' + placaLimpa.substring(3);
 
         const osData = {
-            osNum: numOSFormatado, 
+            osNum: osSendoEditada || (db.proximaOS.toString().padStart(3, '0') + '/' + new Date().getFullYear().toString().slice(-2)), 
             status: tipoDoc,
             fase: tipoDoc === 'OS' ? 'EM SERVIÇO' : 'ORÇAMENTO',
             timestamp: Date.now(), data: dataStr,
@@ -1143,7 +1152,7 @@
         
         msg += `*TOTAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
         msg += `-----------------------------------\n\n`;
-        msg += `_Estou gerando o documento completo em PDF e já te envio abaixo _`;
+        msg += `_Estou gerando o documento completo em PDF e já te envio abaixo 👇_`;
 
         window.open(`https://wa.me/${telefoneCliente}?text=${encodeURIComponent(msg)}`, '_blank');
     }
