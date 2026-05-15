@@ -388,12 +388,15 @@
 
     <div id="aba-clientes" class="tab-content">
         <div class="panel">
-            <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; margin-bottom: 15px;">
+            <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3f3f4e; padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <h2 style="border-bottom:none; padding-bottom:0; margin-bottom:0;">Cadastro de Clientes e CRM</h2>
                     <p style="color:#aaa; font-size:12px; margin-top:5px; margin-bottom:0;">Gerencie o cadastro dos veículos ou acione os clientes no WhatsApp.</p>
                 </div>
-                <button class="btn-small" style="background:#007bff; font-size: 13px; padding: 10px 20px;" onclick="abrirNovoCliente()">➕ NOVO CLIENTE</button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="buscaCliente" placeholder="🔍 Buscar Nome, Placa ou Tel..." style="max-width: 250px; margin:0;" oninput="atualizarAbaClientes()">
+                    <button class="btn-small" style="background:#007bff; font-size: 13px; padding: 10px 20px;" onclick="abrirNovoCliente()">➕ NOVO CLIENTE</button>
+                </div>
             </div>
             <table class="table-dark">
                 <thead><tr><th>NOME DO CLIENTE</th><th>TELEFONE</th><th>VEÍCULO ATENDIDO</th><th>ÚLTIMA VISITA</th><th>AÇÕES E MARKETING</th></tr></thead>
@@ -1365,25 +1368,50 @@
     }
 
     // =========================================================
-    // CRM E CLIENTES
+    // CRM E CLIENTES - COM BUSCA E ORDEM ALFABÉTICA
     // =========================================================
     function atualizarAbaClientes() {
-        let html = ''; let clientesMap = {}; let agora = Date.now();
+        let html = ''; 
+        let clientesMap = {}; 
+        let agora = Date.now();
+        let termoBusca = document.getElementById('buscaCliente') ? document.getElementById('buscaCliente').value.toUpperCase().trim() : '';
         
         db.vendas.filter(v => v.status === 'OS').forEach(v => {
-            if(!clientesMap[v.tel]) clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp };
+            if(!clientesMap[v.tel]) clientesMap[v.tel] = { nome: v.cliente, veiculos: new Set(), ultimaData: v.timestamp, tel: v.tel };
             clientesMap[v.tel].veiculos.add(`${v.marca || ''} ${v.modelo || ''} (${v.placa || ''})`);
             if(v.timestamp > clientesMap[v.tel].ultimaData) clientesMap[v.tel].ultimaData = v.timestamp;
         });
 
         Object.values(db.clientes).forEach(c => {
             if(!clientesMap[c.tel]) {
-                clientesMap[c.tel] = { nome: c.nome, veiculos: new Set([`${c.marca||''} ${c.modelo||''} (${c.placa||''})`]), ultimaData: 0 };
+                clientesMap[c.tel] = { nome: c.nome, veiculos: new Set([`${c.marca||''} ${c.modelo||''} (${c.placa||''})`]), ultimaData: 0, tel: c.tel };
+            } else {
+                clientesMap[c.tel].veiculos.add(`${c.marca||''} ${c.modelo||''} (${c.placa||''})`);
             }
         });
 
-        Object.keys(clientesMap).forEach(tel => {
-            let c = clientesMap[tel];
+        // 1. Converter para Lista (Array) para ordenar e pesquisar
+        let listaClientes = Object.values(clientesMap);
+
+        // 2. Ordenar por Ordem Alfabética (Nome)
+        listaClientes.sort((a, b) => {
+            let nomeA = a.nome ? a.nome.toUpperCase() : "";
+            let nomeB = b.nome ? b.nome.toUpperCase() : "";
+            return nomeA.localeCompare(nomeB);
+        });
+
+        // 3. Filtrar caso o usuário tenha digitado algo na barra de pesquisa
+        if (termoBusca) {
+            listaClientes = listaClientes.filter(c => {
+                let veiculosStr = Array.from(c.veiculos).join(' ').toUpperCase();
+                let nomeStr = c.nome ? c.nome.toUpperCase() : '';
+                let telStr = c.tel ? c.tel : '';
+                return nomeStr.includes(termoBusca) || telStr.includes(termoBusca) || veiculosStr.includes(termoBusca);
+            });
+        }
+
+        // 4. Desenhar a Tabela na Tela
+        listaClientes.forEach(c => {
             let dias = c.ultimaData > 0 ? Math.floor((agora - c.ultimaData) / (1000 * 60 * 60 * 24)) : 0;
             let dataStr = c.ultimaData > 0 ? new Date(c.ultimaData).toLocaleDateString('pt-BR') : 'Apenas Cadastro';
             let badgeDias = c.ultimaData > 0 ? (dias > 180 ? `<span class="badge-warning">Falta há ${dias} dias</span>` : `<span class="badge-ok">Veio há ${dias} dias</span>`) : '';
@@ -1392,15 +1420,16 @@
             let placaEdit = placaExemplo && placaExemplo[1] ? placaExemplo[1].replace('-','') : '';
 
             html += `<tr style="border-bottom: 1px solid #333;">
-                <td>${c.nome}</td><td>${tel}</td><td>${Array.from(c.veiculos).join(', ')}</td>
+                <td>${c.nome}</td><td>${c.tel || ''}</td><td>${Array.from(c.veiculos).join(', ')}</td>
                 <td>${dataStr}<br>${badgeDias}</td>
                 <td>
                     <button class="btn-small" style="background:#007bff;" onclick="abrirEditarCliente('${placaEdit}')">✏️ EDITAR</button>
                     <button class="btn-small" style="background:#dc3545;" onclick="excluirCliente('${placaEdit}')">🗑️</button>
-                    <button class="btn-small" style="background:#25D366;" onclick="zapMarketing('${tel}', '${c.nome}', ${dias})">📱 ZAP</button>
+                    <button class="btn-small" style="background:#25D366;" onclick="zapMarketing('${c.tel || ''}', '${c.nome}', ${dias})">📱 ZAP</button>
                 </td>
             </tr>`;
         });
+        
         document.getElementById('tabelaClientesBody').innerHTML = html;
     }
 
