@@ -1126,8 +1126,21 @@
         
         let msg = `Olá, *${osSelecionada.cliente}*!\nSegue o resumo do seu atendimento na *AG Diesel*.\n\n`;
         msg += `*Doc:* ${osSelecionada.osNum} (${tipoDocStr})\n`;
-        msg += `*Veículo:* ${osSelecionada.marca} ${osSelecionada.modelo} (${osSelecionada.placa})\n`;
+        msg += `*Veículo:* ${osSelecionada.marca || ''} ${osSelecionada.modelo || ''} (${osSelecionada.placa})\n`;
         msg += `-----------------------------------\n`;
+        
+        // --- ADICIONANDO O DETALHAMENTO DE ITENS ---
+        msg += `*DESCRIÇÃO DOS ITENS:*\n`;
+        if (osSelecionada.maoObraFinal > 0) {
+            msg += `🔧 Mão de Obra: ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
+        }
+        if (osSelecionada.pecasFinal && osSelecionada.pecasFinal.length > 0) {
+            osSelecionada.pecasFinal.forEach(p => {
+                msg += `📦 ${p.qtd}x ${p.nome}: ${formatarBRL(p.total)}\n`;
+            });
+        }
+        msg += `-----------------------------------\n`;
+        
         msg += `*TOTAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
         msg += `-----------------------------------\n\n`;
         msg += `_Estou gerando o documento completo em PDF e já te envio abaixo 👇_`;
