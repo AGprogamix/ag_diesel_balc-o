@@ -80,7 +80,10 @@
         .badge-warning { background: #ffcc00; color: #000; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .badge-ok { background: #4caf50; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
-        /* MODAIS E TOASTS */
+        /* MODAIS E TOASTS E ALERTAS */
+        @keyframes blinker { 50% { opacity: 0.5; } }
+        #alertaBackup { display: none; background: #dc3545; color: white; padding: 12px; text-align: center; font-weight: bold; margin-bottom: 15px; border-radius: 4px; animation: blinker 2s linear infinite; cursor: pointer;}
+        
         #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
         .toast { padding: 15px 25px; border-radius: 4px; color: #fff; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transform: translateX(100%); transition: all 0.3s ease-in-out; font-size: 13px;}
         .toast.show { opacity: 1; transform: translateX(0); }
@@ -93,29 +96,30 @@
         .modal-toolbar { background: #2b2b36; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 4px 4px 0 0; border-bottom: 3px solid #cc0000; }
         .btn-close-modal { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px;}
 
-        /* ESTILO DO DOCUMENTO OS PADRÃO (A4/CUPOM) */
+        /* ESTILO DO DOCUMENTO OS NOVO */
         #documentoOS { background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px; }
-        
-        /* NOVO CABEÇALHO DO CLIENTE */
-        .doc-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .doc-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
         .doc-logo-box img { max-height: 70px; }
         .doc-company-info { flex: 1; margin-left: 15px; color: black; }
         .doc-company-info h1 { font-size: 16px; margin: 0; text-transform: uppercase;}
         .doc-company-info p { font-size: 10px; margin: 2px 0; }
         .doc-contact-info { text-align: right; font-size: 10px; color: black; }
         
-        #documentoOS .os-bar { background-color: #8c8c8c !important; color: white !important; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; margin: 15px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        #documentoOS .section-title { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; margin: 15px 0 5px 0; padding-bottom: 2px; text-transform: uppercase; color: black; }
-        #documentoOS table { width: 100%; border-collapse: collapse; margin-bottom: 10px; color: black; }
-        #documentoOS th { background-color: #e6e6e6 !important; padding: 5px; font-size: 10px; text-align: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
-        #documentoOS td { padding: 5px; border: 1px solid #eee; font-size: 10px; }
-        #documentoOS .text-right { text-align: right; }
-        #documentoOS .text-center { text-align: center; }
-        #documentoOS .totals-container { display: flex; flex-direction: column; align-items: flex-end; margin-top: 10px; color: black; }
-        #documentoOS .totals-row { display: flex; justify-content: space-between; width: 200px; font-size: 11px; padding: 2px 0; }
-        #documentoOS .total-bold { font-weight: bold; font-size: 13px; border-top: 1px solid #000; margin-top: 5px; padding-top: 5px; }
-        #documentoOS .signatures { display: flex; justify-content: space-between; margin-top: 60px; text-align: center; font-size: 10px; color: black; }
-        #documentoOS .sig-box { width: 40%; border-top: 1px solid #000; padding-top: 5px; }
+        .os-bar { background-color: #8c8c8c !important; color: white !important; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; margin: 15px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .doc-section-title { font-size: 12px; font-weight: bold; margin: 15px 0 5px 0; color: #333; text-transform: uppercase; }
+        .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; color: black; }
+        .doc-table th { background-color: #e6e6e6 !important; padding: 5px; text-align: left; border-bottom: 2px solid #ccc !important; font-weight: bold; font-size: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .doc-table td { padding: 5px; border-bottom: 1px solid #eee; font-size: 10px;}
+        .text-right { text-align: right !important; }
+        .text-center { text-align: center !important; }
+        .doc-total-box { display: flex; justify-content: flex-end; width: 100%; margin-bottom: 10px; font-size: 11px; padding-top: 5px; color: black;}
+        .doc-total-box span { display: inline-block; width: 90px; text-align: right; }
+        .doc-grand-total { display: flex; flex-direction: column; align-items: flex-end; margin-top: 15px; border-top: 1px solid #000; padding-top: 10px; color: black;}
+        .doc-grand-total div { display: flex; justify-content: flex-end; width: 200px; padding: 3px 0; font-size: 11px;}
+        .doc-grand-total div span { display: inline-block; width: 90px; text-align: right; }
+        .doc-grand-total .bold { font-weight: bold; font-size: 13px;}
+        .signatures { display: flex; justify-content: space-around; margin-top: 50px; text-align: center; font-size: 10px; color: black; }
+        .sig-box { width: 40%; border-top: 1px solid #000; padding-top: 5px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -159,6 +163,8 @@
 
 <div class="container no-print" id="appContainer" style="display:none;">
     
+    <div id="alertaBackup" onclick="openTab('aba-backup')">⚠️ ATENÇÃO: Faça um backup do sistema agora! Já se passou mais de 1 dia desde o último salvamento. (Clique aqui)</div>
+
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h1 style="color: #fff; margin:0; font-size: 20px;">Painel de Controle</h1>
         <div style="color: #aaa; font-size: 12px;">Usuário: <strong id="uiNomeUsuario" style="color:#ff4d4d;">-</strong> | <a href="#" style="color:#007bff; text-decoration:none;" onclick="sairSistema()">Sair</a></div>
@@ -229,6 +235,10 @@
                         <div style="flex: 2;"><label>MECÂNICO RESP.:</label><input type="text" id="nomeMecanico" list="lista-mecanicos"></div>
                         <div style="flex: 1;"><label>VALOR M.O (R$):</label><input type="text" id="maoDeObra" placeholder="Ex: 350,00" inputmode="decimal"></div>
                     </div>
+                    
+                    <label style="margin-top: 15px; color: #ffcc00;">OBSERVAÇÕES PARA O CLIENTE / VEÍCULO (OPCIONAL):</label>
+                    <textarea id="obsOS" rows="2" placeholder="Ex: Veículo entregue com riscos na porta; Peça X não tem garantia..."></textarea>
+
                     <label>PAGAMENTO:</label>
                     <select id="taxaPagamento"></select>
 
@@ -249,7 +259,7 @@
                 <button class="btn-gerar" onclick="gerarOS()">GERAR DOCUMENTO ➔</button>
                 
                 <div id="acoesPosGeracao" style="display: none;">
-                    <button class="btn-print" style="background: #007bff;" onclick="abrirPreview()">🔍 VER PRÉ-VISUALIZAÇÃO</button>
+                    <button class="btn-print" style="background: #007bff;" onclick="abrirPreview()">🔍 VER PRÉ-VISUALIZAÇÃO / PDF</button>
                     <button class="btn-add" style="background: #25D366; margin-top: 10px;" onclick="enviarWhatsApp()">📱 ENVIAR RESUMO PELO WHATSAPP</button>
                     <button class="btn-add" style="background: #6c757d; margin-top: 10px;" onclick="limparTelaOS()">🔄 LIMPAR TELA (NOVO ATENDIMENTO)</button>
                 </div>
@@ -459,27 +469,55 @@
                 </div>
             </div>
 
+            <div class="doc-section-title">Dados do Cliente</div>
+            <div style="display:flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding-bottom: 5px; font-size: 11px; color: black;">
+                <strong id="docCliente" style="text-transform: uppercase;"></strong>
+                <span>Data: <span id="docData"></span></span>
+            </div>
+
             <div class="os-bar"><span id="docTipoDoc">ORDEM DE SERVIÇO</span> Nº <span id="docNumOS"></span></div>
-            <div class="section-title">Cliente</div>
-            <p style="margin: 5px 0;"><strong id="docCliente"></strong> - Tel: <span id="docTel"></span></p>
-            <div class="section-title">Veículo</div>
-            <table>
-                <thead><tr><th>MARCA</th><th>MODELO</th><th>PLACA</th><th>ANO</th><th>COR</th><th>KM</th></tr></thead>
-                <tbody><tr><td id="docMarca"></td><td id="docModelo"></td><td id="docPlaca"></td><td id="docAno"></td><td id="docCor"></td><td id="docKm"></td></tr></tbody>
+
+            <div class="doc-section-title">Veículo</div>
+            <table class="doc-table">
+                <thead><tr><th>Marca</th><th>Modelo</th><th>Cor</th><th>Ano</th><th>Km</th><th class="text-right">Placa</th></tr></thead>
+                <tbody><tr><td id="docMarca"></td><td id="docModelo"></td><td id="docCor"></td><td id="docAno"></td><td id="docKm"></td><td id="docPlaca" class="text-right"></td></tr></tbody>
             </table>
-            <div class="section-title">Serviços e Peças</div>
-            <table id="docTabelaItens">
-                <thead><tr><th>DESCRIÇÃO</th><th class="text-center">QTD</th><th class="text-right">UNIT.</th><th class="text-right">TOTAL</th></tr></thead>
+
+            <div class="doc-section-title">Serviços</div>
+            <table class="doc-table" id="docTabelaServicos">
+                <thead><tr><th>Nome</th><th class="text-center">Quantidade</th><th class="text-center">Unidade</th><th class="text-right">Valor Unitário</th><th class="text-right">Valor Total</th></tr></thead>
                 <tbody></tbody>
             </table>
-            <div class="totals-container">
-                <div class="totals-row"><span>Subtotal:</span><span id="docSubtotal"></span></div>
-                <div class="totals-row total-bold"><span>TOTAL:</span><span id="docTotal"></span></div>
+            <div class="doc-total-box"><span>Total Serviços</span><span id="docTotalServicosVal" style="font-weight:bold;"></span></div>
+
+            <div class="doc-section-title">Peças</div>
+            <table class="doc-table" id="docTabelaPecas">
+                <thead><tr><th>Nome</th><th class="text-center">Quantidade</th><th class="text-center">Unidade</th><th class="text-right">Valor Unitário</th><th class="text-right">Valor Total</th></tr></thead>
+                <tbody></tbody>
+            </table>
+            <div class="doc-total-box"><span>Total Peças</span><span id="docTotalPecasVal" style="font-weight:bold;"></span></div>
+
+            <div class="doc-grand-total">
+                <div><span>Subtotal</span><span id="docSubtotal"></span></div>
+                <div class="bold"><span>Total</span><span id="docTotal"></span></div>
             </div>
-            <p style="margin-top: 20px; font-size: 10px;"><strong id="docPag"></strong> | Garantia de servico / pecas de 90 dias.</p>
+
+            <div class="doc-section-title">Observações</div>
+            <p id="docObsCustom" style="font-size: 10px; color: black; margin: 5px 0; min-height: 15px;"></p>
+            <div style="border-bottom: 1px solid #ccc; padding-bottom: 5px; font-size: 10px; color: black;">
+                <strong>Garantia:</strong> 3 Meses | Pagamento via <span id="docPag"></span>
+            </div>
+
+            <div class="doc-section-title" style="margin-top: 15px;">Fotos</div>
+            <div style="height: 50px;"></div>
+
             <div class="signatures">
-                <div class="sig-box" id="docSigEmpresa">AG DIESEL</div>
+                <div class="sig-box"><strong id="docSigEmpresa">AG DIESEL TELEMECANICA</strong><br>85 994190644</div>
                 <div class="sig-box" id="docSigCliente">CLIENTE</div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 20px;">
+                <div id="qrcodePrint" style="display:inline-block; border: 2px solid #ccc; padding: 2px; background:#fff;"></div>
             </div>
         </div>
     </div>
@@ -577,7 +615,7 @@
     const formatarBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     // =========================================================================
-    // 🔐 LÓGICA DE LOGIN
+    // 🔐 LÓGICA DE LOGIN E ALERTAS
     // =========================================================================
     function fazerLogin() {
         const u = document.getElementById('loginUser').value.toLowerCase().trim();
@@ -606,10 +644,78 @@
         }
         
         configurarDatasSemanais(); 
+        
+        // VERIFICAR BACKUP ANTIGO (> 24h)
+        let lastBackup = localStorage.getItem('agDiesel_lastBackup');
+        if (!lastBackup || (Date.now() - lastBackup > 86400000)) {
+            document.getElementById('alertaBackup').style.display = 'block';
+        }
+
         openTab('aba-os');
+        
+        // VERIFICAR RASCUNHO SALVO
+        setTimeout(verificarRascunho, 500); 
     }
 
     function sairSistema() { location.reload(); }
+
+    // RASCUNHO AUTOMÁTICO - CAPTURA DE DADOS
+    document.addEventListener('input', e => {
+        if (e.target.id !== 'loginUser' && e.target.id !== 'loginPass' && ((e.target.tagName === 'INPUT' && e.target.type === 'text') || e.target.tagName === 'TEXTAREA')) {
+            const start = e.target.selectionStart;
+            e.target.value = e.target.value.toUpperCase();
+            e.target.setSelectionRange(start, start);
+        }
+        if(e.target.closest && e.target.closest('#aba-os')) {
+            salvarRascunho();
+        }
+    });
+
+    function salvarRascunho() {
+        if(osSendoEditada) return; // Não salvar rascunho de edição para não causar confusão
+        const rascunho = {
+            cliente: document.getElementById('nomeCliente').value,
+            tel: document.getElementById('telCliente').value,
+            marca: document.getElementById('marca').value,
+            modelo: document.getElementById('modelo').value,
+            placa: document.getElementById('placa').value,
+            ano: document.getElementById('ano').value,
+            cor: document.getElementById('cor').value,
+            km: document.getElementById('km').value,
+            mecanico: document.getElementById('nomeMecanico').value,
+            maoDeObra: document.getElementById('maoDeObra').value,
+            obs: document.getElementById('obsOS').value,
+            pecas: pecasTmp
+        };
+        localStorage.setItem('agDiesel_rascunho', JSON.stringify(rascunho));
+    }
+
+    function verificarRascunho() {
+        let r = localStorage.getItem('agDiesel_rascunho');
+        if(r) {
+            r = JSON.parse(r);
+            if(r.cliente || r.placa || r.pecas.length > 0) {
+                if(confirm("Você tem um orçamento não salvo. Deseja restaurar os dados de onde parou?")) {
+                    document.getElementById('nomeCliente').value = r.cliente || '';
+                    document.getElementById('telCliente').value = r.tel || '';
+                    document.getElementById('marca').value = r.marca || '';
+                    document.getElementById('modelo').value = r.modelo || '';
+                    document.getElementById('placa').value = r.placa || '';
+                    document.getElementById('ano').value = r.ano || '';
+                    document.getElementById('cor').value = r.cor || '';
+                    document.getElementById('km').value = r.km || '';
+                    document.getElementById('nomeMecanico').value = r.mecanico || '';
+                    document.getElementById('maoDeObra').value = r.maoDeObra || '';
+                    document.getElementById('obsOS').value = r.obs || '';
+                    pecasTmp = r.pecas || [];
+                    renderPecas();
+                    showToast("Rascunho Restaurado!", "info");
+                } else {
+                    localStorage.removeItem('agDiesel_rascunho');
+                }
+            }
+        }
+    }
 
     document.getElementById('loginPass').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') fazerLogin();
@@ -627,11 +733,11 @@
         const segunda = new Date(hoje.setDate(diffSeg)).toISOString().split('T')[0];
         const sabado = new Date(hoje.setDate(diffSab)).toISOString().split('T')[0];
 
-        ['filtroInicioDRE', 'filtroInicioPecas'].forEach(id => {
+        ['filtroInicioDRE', 'filtroInicioPecas', 'filtroInicioMO'].forEach(id => {
             let el = document.getElementById(id);
             if(el) el.value = segunda;
         });
-        ['filtroFimDRE', 'filtroFimPecas'].forEach(id => {
+        ['filtroFimDRE', 'filtroFimPecas', 'filtroFimMO'].forEach(id => {
             let el = document.getElementById(id);
             if(el) el.value = sabado;
         });
@@ -738,14 +844,6 @@
         }
     }
 
-    document.addEventListener('input', e => {
-        if (e.target.tagName === 'INPUT' && e.target.type === 'text' && e.target.id !== 'loginUser' && e.target.id !== 'loginPass') {
-            const start = e.target.selectionStart;
-            e.target.value = e.target.value.toUpperCase();
-            e.target.setSelectionRange(start, start);
-        }
-    });
-
     function extrairNumeroDoTexto(texto) {
         if(!texto) return 0;
         let str = texto.toString().replace('R$', '').trim();
@@ -757,9 +855,6 @@
         document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
         document.getElementById('uiTituloPainel').innerText = "Módulo de OS";
         
-        document.getElementById('uiLabelReserva').innerText = `DILUIR R$ ${CONFIG.sistema.valorReserva.toFixed(2).replace('.', ',')} DE RESERVA`;
-        document.getElementById('uiLabelMargem').innerText = `ADICIONAR +${((CONFIG.sistema.margemExtraPadrao - 1) * 100).toFixed(0)}% DE MARGEM EXTRA`;
-
         const listaMecanicos = document.getElementById('lista-mecanicos');
         CONFIG.equipe.forEach(m => listaMecanicos.appendChild(new Option(m)));
 
@@ -808,7 +903,7 @@
                 .doc-company-info { margin-left: 0; text-align: center; }
                 .doc-company-info h1 { font-size: 14px; margin-bottom: 2px;}
                 .doc-contact-info { text-align: center; margin-top: 5px; width: 100%; align-items: center;}
-                .doc-title-bar { background: none !important; color: #000 !important; border-top: 1px dashed #000; border-bottom: 1px dashed #000; font-size: 13px; margin: 5px 0; padding: 5px 0;}
+                .os-bar { background: none !important; color: #000 !important; border-top: 1px dashed #000; border-bottom: 1px dashed #000; font-size: 13px; margin: 5px 0; padding: 5px 0;}
                 .doc-table { width: 100%; font-size: 10px !important; margin-bottom: 5px; }
                 .doc-table th, .doc-table td { padding: 2px 0; border: none; border-bottom: 1px dashed #ccc !important; }
                 .doc-table th { background: none !important; color: #000; font-weight: bold; border-bottom: 1px solid #000 !important; }
@@ -829,7 +924,7 @@
 
     function limparTelaOS() {
         if(confirm("Deseja limpar os dados da tela?")) {
-            ['nomeCliente','telCliente','marca','modelo','placa','ano','cor','km','nomeMecanico','maoDeObra'].forEach(id => document.getElementById(id).value = '');
+            ['nomeCliente','telCliente','marca','modelo','placa','ano','cor','km','nomeMecanico','maoDeObra', 'obsOS'].forEach(id => document.getElementById(id).value = '');
             
             document.getElementById('repassarTaxa').checked = true;
             document.getElementById('aplicarMargem').checked = true;
@@ -846,6 +941,7 @@
             document.getElementById('uiTituloPainel').style.color = "#ff4d4d";
             document.getElementById('nomeCliente').focus();
             showToast("Tela limpa para novo atendimento", "info");
+            localStorage.removeItem('agDiesel_rascunho'); // Limpa o rascunho salvo
         }
     }
 
@@ -864,10 +960,11 @@
         document.getElementById('marca').value = os.marca;
         document.getElementById('modelo').value = os.modelo;
         document.getElementById('placa').value = (os.placa || '').replace('-', ''); 
-        document.getElementById('ano').value = os.ano;
-        document.getElementById('cor').value = os.cor;
-        document.getElementById('km').value = os.km;
+        document.getElementById('ano').value = os.ano || '';
+        document.getElementById('cor').value = os.cor || '';
+        document.getElementById('km').value = os.km || '';
         document.getElementById('nomeMecanico').value = os.mecanico;
+        document.getElementById('obsOS').value = os.observacoes || '';
         document.getElementById('maoDeObra').value = os.maoObraOriginal > 0 ? os.maoObraOriginal.toFixed(2).replace('.', ',') : '';
 
         // Mantém globais marcados como padrão para não confundir, pois as peças controlam o delas
@@ -881,11 +978,10 @@
                     id: Date.now() + Math.random(),
                     nome: p.nome,
                     qtd: p.qtd,
-                    // Puxa o preço limpo original. Se for uma OS antiga que não tinha isso salvo, puxa o unit.
                     tabelaUnit: p.tabelaUnitOrig || p.unit, 
                     custoUnit: p.custoUnitOrig || (p.unit * CONFIG.sistema.custoPecaPadrao),
-                    usarMargem: p.usarMargem !== undefined ? p.usarMargem : true, // Restaura flag
-                    usarReserva: p.usarReserva !== undefined ? p.usarReserva : true // Restaura flag
+                    usarMargem: p.usarMargem !== undefined ? p.usarMargem : true, 
+                    usarReserva: p.usarReserva !== undefined ? p.usarReserva : true 
                 });
             });
         }
@@ -937,6 +1033,7 @@
                     if(document.getElementById(id).value === '') document.getElementById(id).value = c[id] || '';
                 });
                 mostrarAvisoEncontrado();
+                salvarRascunho();
             }
         }
     }
@@ -953,6 +1050,7 @@
                     if(document.getElementById(id).value === '') document.getElementById(id).value = c[id] || '';
                 });
                 mostrarAvisoEncontrado();
+                salvarRascunho();
             }
         } else if (origemBusca === 'placa' && placa) {
             c = db.clientes[placa];
@@ -961,6 +1059,7 @@
                     document.getElementById(id).value = c[id] || '';
                 });
                 mostrarAvisoEncontrado();
+                salvarRascunho();
             }
         }
     }
@@ -977,7 +1076,6 @@
         
         if(!nome || preco <= 0) return showToast("Digite NOME e VALOR do item.", "error");
 
-        // Pega as configurações padrão das caixinhas globais
         let padraoMargem = document.getElementById('aplicarMargem').checked;
         let padraoReserva = document.getElementById('aplicarReserva').checked;
 
@@ -992,6 +1090,7 @@
         });
         
         renderPecas();
+        salvarRascunho();
         document.getElementById('nomePeca').value = '';
         document.getElementById('qtdPeca').value = '1';
         document.getElementById('tabelaPeca').value = '';
@@ -1001,6 +1100,7 @@
     function removerPecaTmp(index) {
         pecasTmp.splice(index, 1);
         renderPecas();
+        salvarRascunho();
     }
 
     function atualizarPecaTmp(index, campo, valor) {
@@ -1008,11 +1108,12 @@
         if(campo === 'preco') pecasTmp[index].tabelaUnit = extrairNumeroDoTexto(valor) || 0;
         if(campo === 'margem') pecasTmp[index].usarMargem = valor;
         if(campo === 'reserva') pecasTmp[index].usarReserva = valor;
+        salvarRascunho();
     }
 
     function renderPecas() {
         const box = document.getElementById('listaPecasBox');
-        if(pecasTmp.length === 0) { box.innerHTML = '<em style="color:#666;">Nenhum item lançado.</em>'; return; }
+        if(pecasTmp.length === 0) { box.innerHTML = '<em style="color:#666;">Nenhuma peça lançada.</em>'; return; }
         
         let html = '';
         pecasTmp.forEach((p, i) => {
@@ -1042,6 +1143,7 @@
     function gerarOS() {
         const tipoDoc = document.getElementById('tipoDocumento').value;
         const maoObra = extrairNumeroDoTexto(document.getElementById('maoDeObra').value);
+        const observacoes = document.getElementById('obsOS').value;
         const nomeMecanico = document.getElementById('nomeMecanico').value;
         const selectPagamento = document.getElementById('taxaPagamento');
         const taxaPerc = parseFloat(selectPagamento.value) / 100;
@@ -1052,7 +1154,6 @@
 
         let totalVendaPecas = 0, totalCustoPecas = 0, totalElegivelReserva = 0;
         
-        // Passo 1: Calcular valores base das peças (já com as margens individuais)
         pecasTmp.forEach(p => {
             p.precoBase = p.tabelaUnit * p.qtd * (p.usarMargem ? CONFIG.sistema.margemExtraPadrao : 1.0);
             totalVendaPecas += p.precoBase;
@@ -1060,7 +1161,6 @@
             if(p.usarReserva) totalElegivelReserva += p.precoBase;
         });
 
-        // Passo 2: Ratear a Reserva (R$ 50) apenas entre os eleitos
         let valorBaseReal = totalVendaPecas + maoObra;
         let totalComReserva = valorBaseReal;
         
@@ -1073,7 +1173,6 @@
             p.valorPosReserva = p.precoBase + (reservaAplicada * proporcao);
         });
 
-        // Passo 3: Repassar Taxa da Máquina (distribuída em todos os itens e M.O proporcionalmente)
         let faturamentoFinal = repassarTaxa ? totalComReserva / (1 - taxaPerc) : totalComReserva;
         let acrescimoTaxaGlobal = faturamentoFinal - totalComReserva;
         let valorDescontadoMaquina = faturamentoFinal * taxaPerc;
@@ -1095,14 +1194,14 @@
                     qtd: p.qtd, 
                     unit: valorFinalPeca / p.qtd, 
                     total: valorFinalPeca,
-                    tabelaUnitOrig: p.tabelaUnit, // SALVA VALOR LIMPO
-                    custoUnitOrig: p.custoUnit,   // SALVA CUSTO LIMPO
-                    usarMargem: p.usarMargem,     // SALVA ESTADO DA CAIXINHA
-                    usarReserva: p.usarReserva    // SALVA ESTADO DA CAIXINHA
+                    tabelaUnitOrig: p.tabelaUnit, 
+                    custoUnitOrig: p.custoUnit,   
+                    usarMargem: p.usarMargem,     
+                    usarReserva: p.usarReserva    
                 });
             });
         } else {
-            maoObraFinal += acrescimoRateio; // Fallback se tudo for 0
+            maoObraFinal += acrescimoTaxaGlobal; 
         }
 
         const numOSFormatado = db.proximaOS.toString().padStart(3, '0') + '/' + new Date().getFullYear().toString().slice(-2);
@@ -1111,7 +1210,7 @@
         if(placaLimpa.length === 7 && !placaLimpa.includes('-')) placaLimpa = placaLimpa.substring(0,3) + '-' + placaLimpa.substring(3);
 
         const osData = {
-            osNum: osSendoEditada || (db.proximaOS.toString().padStart(3, '0') + '/26'), 
+            osNum: osSendoEditada || numOSFormatado, 
             status: tipoDoc,
             fase: tipoDoc === 'OS' ? 'EM SERVIÇO' : 'ORÇAMENTO',
             timestamp: Date.now(), data: dataStr,
@@ -1121,10 +1220,12 @@
             ano: document.getElementById('ano').value, cor: document.getElementById('cor').value,
             placa: placaLimpa, km: document.getElementById('km').value,
             mecanico: nomeMecanico, maoObraOriginal: maoObra, maoObraFinal: maoObraFinal, pecasFinal: arrPecasFinal,
+            observacoes: observacoes,
             faturamento: faturamentoFinal, custoTotalPecas: totalCustoPecas, vendaTotalPecas: totalVendaPecas,
             condPag: taxaPerc > 0 ? `*PAGAMENTO VIA ${nomePagamento}` : '',
-            taxaMaq: valorDescontadoMaquina, reserva: reservaAplicada, lucro: lucroReal, sincronizado: false,
-            itensResumo: pecasTmp.map(p => p.nome).join(', ')
+            nomePagamento: nomePagamento,
+            itensResumo: pecasTmp.map(p => p.nome).join(', '),
+            taxaMaq: valorDescontadoMaquina, reserva: reservaAplicada, lucro: lucroReal, sincronizado: false 
         };
 
         if (osSendoEditada) {
@@ -1164,6 +1265,7 @@
             showToast("Orçamento Salvo! Doc: " + osData.osNum, "info");
         }
 
+        localStorage.removeItem('agDiesel_rascunho'); // Limpa o rascunho após salvar
         montarOS(osData);
         backupAutomaticoNuvem();
     }
@@ -1174,24 +1276,38 @@
         document.getElementById('docData').innerText = os.data;
         document.getElementById('docCliente').innerText = os.cliente;
         document.getElementById('docSigCliente').innerText = os.cliente;
-        document.getElementById('docTel').innerText = os.tel;
         document.getElementById('docMarca').innerText = os.marca;
         document.getElementById('docModelo').innerText = os.modelo;
         document.getElementById('docPlaca').innerText = os.placa;
-        document.getElementById('docAno').innerText = os.ano;
-        document.getElementById('docCor').innerText = os.cor;
-        document.getElementById('docKm').innerText = os.km;
+        document.getElementById('docAno').innerText = os.ano || '';
+        document.getElementById('docCor').innerText = os.cor || '';
+        document.getElementById('docKm').innerText = os.km || '';
 
+        // Montar Serviços Separados
+        let htmlServicos = '';
         let valorMaoObraDoc = os.maoObraFinal !== undefined ? os.maoObraFinal : os.maoObraOriginal;
-        let html = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-right">${formatarBRL(valorMaoObraDoc)}</td><td class="text-right">${formatarBRL(valorMaoObraDoc)}</td></tr>`;
-        if(os.pecasFinal) {
-            os.pecasFinal.forEach(p => { html += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`; });
+        if (valorMaoObraDoc > 0) {
+            htmlServicos = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-center">un</td><td class="text-right">${formatarBRL(valorMaoObraDoc)}</td><td class="text-right">${formatarBRL(valorMaoObraDoc)}</td></tr>`;
         }
+        document.querySelector('#docTabelaServicos tbody').innerHTML = htmlServicos;
+        document.getElementById('docTotalServicosVal').innerText = formatarBRL(valorMaoObraDoc || 0);
 
-        document.querySelector('#docTabelaItens tbody').innerHTML = html;
+        // Montar Peças Separadas
+        let htmlPecas = '';
+        let totalPecasSomado = 0;
+        if(os.pecasFinal && os.pecasFinal.length > 0) {
+            os.pecasFinal.forEach(p => { 
+                htmlPecas += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-center">un</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`; 
+                totalPecasSomado += p.total;
+            });
+        }
+        document.querySelector('#docTabelaPecas tbody').innerHTML = htmlPecas;
+        document.getElementById('docTotalPecasVal').innerText = formatarBRL(totalPecasSomado);
+
         document.getElementById('docSubtotal').innerText = formatarBRL(os.faturamento);
         document.getElementById('docTotal').innerText = formatarBRL(os.faturamento);
-        document.getElementById('docPag').innerText = os.condPag;
+        document.getElementById('docPag').innerText = os.nomePagamento || 'DINHEIRO';
+        document.getElementById('docObsCustom').innerText = os.observacoes ? "OBS: " + os.observacoes : '';
     }
 
     function enviarWhatsApp(osNumEspecifica = null) {
@@ -1219,6 +1335,11 @@
             });
         }
         msg += `-----------------------------------\n`;
+
+        if(osSelecionada.observacoes) {
+            msg += `*OBS:* ${osSelecionada.observacoes}\n`;
+            msg += `-----------------------------------\n`;
+        }
         
         msg += `*TOTAL:* *${formatarBRL(osSelecionada.faturamento)}*\n`;
         msg += `-----------------------------------\n\n`;
@@ -1237,7 +1358,7 @@
         let termoBusca = document.getElementById('buscaKanban') ? document.getElementById('buscaKanban').value.toUpperCase().trim() : '';
 
         let todasEntregues = db.vendas.filter(v => (v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO')) === 'ENTREGUE');
-        let ultimasEntregues = todasEntregues.slice(-15).map(v => v.osNum);
+        let ultimasEntregues = todasEntregues.slice(-5).map(v => v.osNum);
 
         db.vendas.forEach(v => {
             const fase = v.fase || (v.status === 'ORÇAMENTO' ? 'ORÇAMENTO' : 'EM SERVIÇO');
@@ -1578,6 +1699,11 @@
         let a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([localStorage.getItem(LOCAL_DB_KEY)], {type: "application/json"}));
         a.download = `Backup_Sistema_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.json`; a.click();
+        
+        // REGISTRA A DATA DO BACKUP PARA O ALERTA PARAR DE PISCAR
+        localStorage.setItem('agDiesel_lastBackup', Date.now());
+        document.getElementById('alertaBackup').style.display = 'none';
+        
         showToast("Backup gerado com sucesso!", "success");
     }
 </script>
