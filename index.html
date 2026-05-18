@@ -51,6 +51,7 @@
         .btn-remove { background: #dc3545; color: white; border: none; border-radius: 3px; padding: 6px 10px; cursor: pointer; font-size: 11px; font-weight: bold;}
         
         .lista-itens { margin-top: 15px; max-height: 400px; overflow-y: auto; font-size: 13px; border: 1px dashed #4a4a5a; padding: 10px; background: #1e1e24; border-radius: 4px; }
+        .item-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 6px 0; align-items: center; }
         
         .checkbox-container { display: flex; align-items: center; margin-top: 10px; background: #23232c; padding: 10px; border: 1px solid #4a4a5a; border-radius: 4px; }
         .checkbox-container input { width: auto; margin-right: 10px; transform: scale(1.2); }
@@ -95,25 +96,23 @@
 
         /* ESTILO DO DOCUMENTO OS PADRÃO (A4/CUPOM) */
         #documentoOS { background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px; }
-        .doc-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .doc-logo-box img { max-height: 70px; }
-        .doc-company-info { flex: 1; margin-left: 15px; }
-        .doc-company-info h1 { font-size: 15px; margin: 0; text-transform: uppercase;}
-        .doc-company-info p { font-size: 10px; margin: 2px 0; }
-        .doc-contact-info { text-align: right; font-size: 10px; }
-        .doc-title-bar { background-color: #a6a6a6 !important; color: white !important; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; margin: 10px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .doc-section-title { font-size: 12px; margin: 15px 0 5px 0; color: #333; }
-        .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-        .doc-table th { background-color: #e6e6e6 !important; padding: 5px; text-align: left; border-bottom: 2px solid #ccc !important; font-weight: bold; font-size: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .doc-table td { padding: 5px; border-bottom: 1px solid #eee; font-size: 10px;}
-        .text-right { text-align: right !important; }
-        .text-center { text-align: center !important; }
-        .doc-total-box { display: flex; justify-content: flex-end; width: 100%; margin-bottom: 10px; font-size: 11px; padding-top: 5px;}
-        .doc-total-box span { display: inline-block; width: 90px; text-align: right; }
-        .doc-grand-total { display: flex; flex-direction: column; align-items: flex-end; margin-top: 15px; border-top: 1px solid #000; padding-top: 10px;}
-        .doc-grand-total div { display: flex; justify-content: flex-end; width: 200px; padding: 3px 0; font-size: 11px;}
-        .doc-grand-total div span { display: inline-block; width: 90px; text-align: right; }
-        .doc-grand-total .bold { font-weight: bold; font-size: 13px;}
+        #documentoOS .os-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        #documentoOS .os-company { flex: 1; color: black; }
+        #documentoOS .os-company h1 { font-size: 16px; margin: 0; }
+        #documentoOS .os-company p { font-size: 10px; margin: 2px 0; }
+        #documentoOS .os-contact { text-align: right; font-size: 10px; color: black; display: flex; flex-direction: column; align-items: flex-end;}
+        #documentoOS .os-bar { background-color: #8c8c8c !important; color: white !important; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; margin: 15px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        #documentoOS .section-title { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; margin: 15px 0 5px 0; padding-bottom: 2px; text-transform: uppercase; color: black; }
+        #documentoOS table { width: 100%; border-collapse: collapse; margin-bottom: 10px; color: black; }
+        #documentoOS th { background-color: #e6e6e6 !important; padding: 5px; font-size: 10px; text-align: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+        #documentoOS td { padding: 5px; border: 1px solid #eee; font-size: 10px; }
+        #documentoOS .text-right { text-align: right; }
+        #documentoOS .text-center { text-align: center; }
+        #documentoOS .totals-container { display: flex; flex-direction: column; align-items: flex-end; margin-top: 10px; color: black; }
+        #documentoOS .totals-row { display: flex; justify-content: space-between; width: 200px; font-size: 11px; padding: 2px 0; }
+        #documentoOS .total-bold { font-weight: bold; font-size: 13px; border-top: 1px solid #000; margin-top: 5px; padding-top: 5px; }
+        #documentoOS .signatures { display: flex; justify-content: space-between; margin-top: 60px; text-align: center; font-size: 10px; color: black; }
+        #documentoOS .sig-box { width: 40%; border-top: 1px solid #000; padding-top: 5px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -211,13 +210,13 @@
                     <input type="text" id="nomePeca" list="sugestoes-pecas">
                     <div class="row-inputs">
                         <div style="flex: 1;"><label>QTD:</label><input type="number" id="qtdPeca" value="1" min="1"></div>
-                        <div style="flex: 2;"><label>PREÇO TABELA LIMPO (R$):</label><input type="text" id="tabelaPeca" placeholder="Ex: 150,00" inputmode="decimal"></div>
+                        <div style="flex: 2;"><label>PREÇO TABELA (R$):</label><input type="text" id="tabelaPeca" placeholder="Ex: 150,00" inputmode="decimal"></div>
                     </div>
                     <button class="btn-add" onclick="adicionarPeca()">+ INSERIR ITEM</button>
                     
                     <div style="margin-top: 15px;">
-                        <h3 style="font-size: 11px; color:#aaa; margin-bottom:5px;">LISTA DE ITENS (PODE EDITAR OS VALORES ABAIXO)</h3>
-                        <div class="lista-itens" id="listaPecasBox"><em>Nenhuma peça.</em></div>
+                        <h3 style="font-size: 11px; color:#aaa; margin-bottom:5px;">LISTA DE ITENS (EDITÁVEL)</h3>
+                        <div class="lista-itens" id="listaPecasBox"><em>Nenhum item.</em></div>
                     </div>
                 </div>
 
@@ -237,17 +236,17 @@
                             <label style="color:#ccc; display:flex; align-items:center;"><input type="checkbox" id="aplicarReserva" checked style="width:auto; margin-right:5px;"> Rateio Fixo (+R$50)</label>
                         </div>
                     </div>
-                    
+
                     <div class="checkbox-container" style="border-color: #007bff; margin-top: 15px;">
                         <input type="checkbox" id="repassarTaxa" checked>
-                        <label for="repassarTaxa" style="color: #4da6ff;">REPASSAR TAXA DA MÁQUINA AO CLIENTE NO FINAL</label>
+                        <label for="repassarTaxa" style="color: #4da6ff;">REPASSAR TAXA DA MÁQUINA AO CLIENTE</label>
                     </div>
                 </div>
 
                 <button class="btn-gerar" onclick="gerarOS()">GERAR DOCUMENTO ➔</button>
                 
                 <div id="acoesPosGeracao" style="display: none;">
-                    <button class="btn-print" style="background: #007bff;" onclick="abrirPreview()">🔍 VER PRÉ-VISUALIZAÇÃO / PDF</button>
+                    <button class="btn-print" style="background: #007bff;" onclick="abrirPreview()">🔍 VER PRÉ-VISUALIZAÇÃO</button>
                     <button class="btn-add" style="background: #25D366; margin-top: 10px;" onclick="enviarWhatsApp()">📱 ENVIAR RESUMO PELO WHATSAPP</button>
                     <button class="btn-add" style="background: #6c757d; margin-top: 10px;" onclick="limparTelaOS()">🔄 LIMPAR TELA (NOVO ATENDIMENTO)</button>
                 </div>
@@ -443,71 +442,40 @@
         </div>
 
         <div id="documentoOS">
-            <div class="doc-header-flex">
-                <div class="doc-logo-box">
-                    <img id="logoEmpresa" src="" alt="Logo AG Diesel" onerror="this.style.display='none'">
+            <div class="os-header">
+                <img id="logoEmpresa" src="" alt="LOGO" onerror="this.style.display='none'">
+                <div class="os-company">
+                    <h1 id="docNomeEmpresa">AG DIESEL</h1>
+                    <p id="docCnpjEndereco">CNPJ | Endereço</p>
+                    <p id="docCidadeTel">Fortaleza/CE | Telefone</p>
                 </div>
-                <div class="doc-company-info">
-                    <h1 id="docNomeEmpresa">AG DIESEL TELEMECANICA</h1>
-                    <p id="docCnpjEndereco">10.488.157/0001-61<br>Avenida Luís Pio - Mangabeira<br>61778-590 - Eusébio/CE</p>
-                </div>
-                <div class="doc-contact-info">
-                    <p>Tel.: (85) 99419-0644<br>agdiesel30@gmail.com<br>Contato: 85 994190644</p>
+                <div class="os-contact">
+                    <p id="docData" style="margin:0 0 5px 0;"></p>
+                    <div id="qrcodePrint" style="display:inline-block; border: 2px solid #ccc; padding: 2px; background:#fff;"></div>
+                    <p style="font-size:8px; margin: 2px 0 0 0;">Fale Conosco!</p>
                 </div>
             </div>
-
-            <div class="doc-section-title">Dados do Cliente</div>
-            <div style="display:flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
-                <strong id="docCliente" style="text-transform: uppercase;"></strong>
-                <span>Data: <span id="docData"></span></span>
-            </div>
-
-            <div class="doc-title-bar"><span id="docTipoDoc">ORDEM DE SERVIÇO</span> Nº <span id="docNumOS"></span></div>
-
-            <div class="doc-section-title">Veículo</div>
-            <table class="doc-table">
-                <thead><tr><th>Marca</th><th>Modelo</th><th>Cor</th><th>Ano</th><th>Km</th><th class="text-right">Placa</th></tr></thead>
-                <tbody><tr><td id="docMarca"></td><td id="docModelo"></td><td id="docCor"></td><td id="docAno"></td><td id="docKm"></td><td id="docPlaca" class="text-right"></td></tr></tbody>
+            <div class="os-bar"><span id="docTipoDoc">ORDEM DE SERVIÇO</span> Nº <span id="docNumOS"></span></div>
+            <div class="section-title">Cliente</div>
+            <p style="margin: 5px 0;"><strong id="docCliente"></strong> - Tel: <span id="docTel"></span></p>
+            <div class="section-title">Veículo</div>
+            <table>
+                <thead><tr><th>MARCA</th><th>MODELO</th><th>PLACA</th><th>ANO</th><th>COR</th><th>KM</th></tr></thead>
+                <tbody><tr><td id="docMarca"></td><td id="docModelo"></td><td id="docPlaca"></td><td id="docAno"></td><td id="docCor"></td><td id="docKm"></td></tr></tbody>
             </table>
-
-            <div class="doc-section-title">Serviços</div>
-            <table class="doc-table" id="docTabelaServicos">
-                <thead><tr><th>Nome</th><th class="text-center">Quantidade</th><th class="text-center">Unidade</th><th class="text-right">Valor Unitário</th><th class="text-right">Valor Total</th></tr></thead>
+            <div class="section-title">Serviços e Peças</div>
+            <table id="docTabelaItens">
+                <thead><tr><th>DESCRIÇÃO</th><th class="text-center">QTD</th><th class="text-right">UNIT.</th><th class="text-right">TOTAL</th></tr></thead>
                 <tbody></tbody>
             </table>
-            <div class="doc-total-box"><span>Total Serviços</span><span id="docTotalServicosVal" style="font-weight:bold;"></span></div>
-
-            <div class="doc-section-title">Peças</div>
-            <table class="doc-table" id="docTabelaPecas">
-                <thead><tr><th>Nome</th><th class="text-center">Quantidade</th><th class="text-center">Unidade</th><th class="text-right">Valor Unitário</th><th class="text-right">Valor Total</th></tr></thead>
-                <tbody></tbody>
-            </table>
-            <div class="doc-total-box"><span>Total Peças</span><span id="docTotalPecasVal" style="font-weight:bold;"></span></div>
-
-            <div class="doc-grand-total">
-                <div><span>Subtotal</span><span id="docSubtotal"></span></div>
-                <div class="bold"><span>Total</span><span id="docTotal"></span></div>
+            <div class="totals-container">
+                <div class="totals-row"><span>Subtotal:</span><span id="docSubtotal"></span></div>
+                <div class="totals-row total-bold"><span>TOTAL:</span><span id="docTotal"></span></div>
             </div>
-
-            <div class="doc-section-title">Observações</div>
-            <div style="border-bottom: 1px solid #ccc; padding-bottom: 5px; font-size: 10px;">
-                <strong>Garantia:</strong> 3 Meses | Pagamento via <span id="docPag"></span>
-            </div>
-
-            <div class="doc-section-title">Fotos</div>
-            <div style="height: 50px;"></div>
-
-            <div class="signatures" style="display: flex; justify-content: space-around; margin-top: 50px; text-align: center; font-size: 10px;">
-                <div style="width: 40%;">
-                    <div style="border-top: 1px solid #000; padding-top: 5px;"><strong id="docSigEmpresa">AG DIESEL TELEMECANICA</strong><br>85 994190644</div>
-                </div>
-                <div style="width: 40%;">
-                    <div style="border-top: 1px solid #000; padding-top: 5px;" id="docSigCliente">CLIENTE</div>
-                </div>
-            </div>
-            
-            <div style="text-align: right; margin-top: 20px;">
-                <div id="qrcodePrint" style="display:inline-block; border: 2px solid #ccc; padding: 2px; background:#fff;"></div>
+            <p style="margin-top: 20px; font-size: 10px;"><strong id="docPag"></strong> | Garantia de servico / pecas de 90 dias.</p>
+            <div class="signatures">
+                <div class="sig-box" id="docSigEmpresa">AG DIESEL</div>
+                <div class="sig-box" id="docSigCliente">CLIENTE</div>
             </div>
         </div>
     </div>
@@ -1204,29 +1172,15 @@
         document.getElementById('docCor').innerText = os.cor;
         document.getElementById('docKm').innerText = os.km;
 
-        // Montar Serviços Separados
-        let htmlServicos = '';
-        if (os.maoObraFinal > 0) {
-            htmlServicos = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-center">un</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td></tr>`;
+        let html = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td></tr>`;
+        if(os.pecasFinal) {
+            os.pecasFinal.forEach(p => { html += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`; });
         }
-        document.querySelector('#docTabelaServicos tbody').innerHTML = htmlServicos;
-        document.getElementById('docTotalServicosVal').innerText = formatarBRL(os.maoObraFinal);
 
-        // Montar Peças Separadas
-        let htmlPecas = '';
-        let totalPecasSomado = 0;
-        if(os.pecasFinal && os.pecasFinal.length > 0) {
-            os.pecasFinal.forEach(p => { 
-                htmlPecas += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-center">un</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`; 
-                totalPecasSomado += p.total;
-            });
-        }
-        document.querySelector('#docTabelaPecas tbody').innerHTML = htmlPecas;
-        document.getElementById('docTotalPecasVal').innerText = formatarBRL(totalPecasSomado);
-
+        document.querySelector('#docTabelaItens tbody').innerHTML = html;
         document.getElementById('docSubtotal').innerText = formatarBRL(os.faturamento);
         document.getElementById('docTotal').innerText = formatarBRL(os.faturamento);
-        document.getElementById('docPag').innerText = os.nomePagamento || 'DINHEIRO';
+        document.getElementById('docPag').innerText = os.condPag;
     }
 
     function enviarWhatsApp(osNumEspecifica = null) {
