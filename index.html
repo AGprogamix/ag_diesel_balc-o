@@ -51,7 +51,6 @@
         .btn-remove { background: #dc3545; color: white; border: none; border-radius: 3px; padding: 6px 10px; cursor: pointer; font-size: 11px; font-weight: bold;}
         
         .lista-itens { margin-top: 15px; max-height: 400px; overflow-y: auto; font-size: 13px; border: 1px dashed #4a4a5a; padding: 10px; background: #1e1e24; border-radius: 4px; }
-        .item-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 6px 0; align-items: center; }
         
         .checkbox-container { display: flex; align-items: center; margin-top: 10px; background: #23232c; padding: 10px; border: 1px solid #4a4a5a; border-radius: 4px; }
         .checkbox-container input { width: auto; margin-right: 10px; transform: scale(1.2); }
@@ -96,11 +95,15 @@
 
         /* ESTILO DO DOCUMENTO OS PADRÃO (A4/CUPOM) */
         #documentoOS { background: white; color: black; padding: 30px 40px; font-family: Arial, sans-serif; font-size: 11px; }
-        #documentoOS .os-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        #documentoOS .os-company { flex: 1; color: black; }
-        #documentoOS .os-company h1 { font-size: 16px; margin: 0; }
-        #documentoOS .os-company p { font-size: 10px; margin: 2px 0; }
-        #documentoOS .os-contact { text-align: right; font-size: 10px; color: black; display: flex; flex-direction: column; align-items: flex-end;}
+        
+        /* NOVO CABEÇALHO DO CLIENTE */
+        .doc-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .doc-logo-box img { max-height: 70px; }
+        .doc-company-info { flex: 1; margin-left: 15px; color: black; }
+        .doc-company-info h1 { font-size: 16px; margin: 0; text-transform: uppercase;}
+        .doc-company-info p { font-size: 10px; margin: 2px 0; }
+        .doc-contact-info { text-align: right; font-size: 10px; color: black; }
+        
         #documentoOS .os-bar { background-color: #8c8c8c !important; color: white !important; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; margin: 15px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         #documentoOS .section-title { font-size: 11px; font-weight: bold; border-bottom: 1px solid #000; margin: 15px 0 5px 0; padding-bottom: 2px; text-transform: uppercase; color: black; }
         #documentoOS table { width: 100%; border-collapse: collapse; margin-bottom: 10px; color: black; }
@@ -210,7 +213,7 @@
                     <input type="text" id="nomePeca" list="sugestoes-pecas">
                     <div class="row-inputs">
                         <div style="flex: 1;"><label>QTD:</label><input type="number" id="qtdPeca" value="1" min="1"></div>
-                        <div style="flex: 2;"><label>PREÇO TABELA (R$):</label><input type="text" id="tabelaPeca" placeholder="Ex: 150,00" inputmode="decimal"></div>
+                        <div style="flex: 2;"><label>PREÇO TABELA LIMPO (R$):</label><input type="text" id="tabelaPeca" placeholder="Ex: 150,00" inputmode="decimal"></div>
                     </div>
                     <button class="btn-add" onclick="adicionarPeca()">+ INSERIR ITEM</button>
                     
@@ -239,7 +242,7 @@
 
                     <div class="checkbox-container" style="border-color: #007bff; margin-top: 15px;">
                         <input type="checkbox" id="repassarTaxa" checked>
-                        <label for="repassarTaxa" style="color: #4da6ff;">REPASSAR TAXA DA MÁQUINA AO CLIENTE</label>
+                        <label for="repassarTaxa" style="color: #4da6ff;">REPASSAR TAXA DA MÁQUINA AO CLIENTE NO FINAL</label>
                     </div>
                 </div>
 
@@ -442,19 +445,20 @@
         </div>
 
         <div id="documentoOS">
-            <div class="os-header">
-                <img id="logoEmpresa" src="" alt="LOGO" onerror="this.style.display='none'">
-                <div class="os-company">
-                    <h1 id="docNomeEmpresa">AG DIESEL</h1>
-                    <p id="docCnpjEndereco">CNPJ | Endereço</p>
-                    <p id="docCidadeTel">Fortaleza/CE | Telefone</p>
+            
+            <div class="doc-header-flex">
+                <div class="doc-logo-box">
+                    <img id="logoEmpresa" src="" alt="Logo AG Diesel" onerror="this.style.display='none'">
                 </div>
-                <div class="os-contact">
-                    <p id="docData" style="margin:0 0 5px 0;"></p>
-                    <div id="qrcodePrint" style="display:inline-block; border: 2px solid #ccc; padding: 2px; background:#fff;"></div>
-                    <p style="font-size:8px; margin: 2px 0 0 0;">Fale Conosco!</p>
+                <div class="doc-company-info">
+                    <h1 id="docNomeEmpresa">AG DIESEL TELEMECANICA</h1>
+                    <p id="docCnpjEndereco">10.488.157/0001-61<br>Avenida Luís Pio - Mangabeira<br>61778-590 - Eusébio/CE</p>
+                </div>
+                <div class="doc-contact-info">
+                    <p>Tel.: (85) 99419-0644<br>agdiesel30@gmail.com<br>Contato: 85 994190644</p>
                 </div>
             </div>
+
             <div class="os-bar"><span id="docTipoDoc">ORDEM DE SERVIÇO</span> Nº <span id="docNumOS"></span></div>
             <div class="section-title">Cliente</div>
             <p style="margin: 5px 0;"><strong id="docCliente"></strong> - Tel: <span id="docTel"></span></p>
@@ -753,6 +757,9 @@
         document.title = CONFIG.empresa.nome + " - " + CONFIG.sistema.tituloApp;
         document.getElementById('uiTituloPainel').innerText = "Módulo de OS";
         
+        document.getElementById('uiLabelReserva').innerText = `DILUIR R$ ${CONFIG.sistema.valorReserva.toFixed(2).replace('.', ',')} DE RESERVA`;
+        document.getElementById('uiLabelMargem').innerText = `ADICIONAR +${((CONFIG.sistema.margemExtraPadrao - 1) * 100).toFixed(0)}% DE MARGEM EXTRA`;
+
         const listaMecanicos = document.getElementById('lista-mecanicos');
         CONFIG.equipe.forEach(m => listaMecanicos.appendChild(new Option(m)));
 
@@ -823,6 +830,7 @@
     function limparTelaOS() {
         if(confirm("Deseja limpar os dados da tela?")) {
             ['nomeCliente','telCliente','marca','modelo','placa','ano','cor','km','nomeMecanico','maoDeObra'].forEach(id => document.getElementById(id).value = '');
+            
             document.getElementById('repassarTaxa').checked = true;
             document.getElementById('aplicarMargem').checked = true;
             document.getElementById('aplicarReserva').checked = true;
@@ -862,7 +870,7 @@
         document.getElementById('nomeMecanico').value = os.mecanico;
         document.getElementById('maoDeObra').value = os.maoObraOriginal > 0 ? os.maoObraOriginal.toFixed(2).replace('.', ',') : '';
 
-        // Mantém globais desmarcados para não confundir, pois as peças agora têm controle individual
+        // Mantém globais marcados como padrão para não confundir, pois as peças controlam o delas
         document.getElementById('aplicarMargem').checked = true;
         document.getElementById('aplicarReserva').checked = true;
 
@@ -873,7 +881,8 @@
                     id: Date.now() + Math.random(),
                     nome: p.nome,
                     qtd: p.qtd,
-                    tabelaUnit: p.tabelaUnitOrig || p.unit, // Puxa valor limpo original se existir
+                    // Puxa o preço limpo original. Se for uma OS antiga que não tinha isso salvo, puxa o unit.
+                    tabelaUnit: p.tabelaUnitOrig || p.unit, 
                     custoUnit: p.custoUnitOrig || (p.unit * CONFIG.sistema.custoPecaPadrao),
                     usarMargem: p.usarMargem !== undefined ? p.usarMargem : true, // Restaura flag
                     usarReserva: p.usarReserva !== undefined ? p.usarReserva : true // Restaura flag
@@ -1003,7 +1012,7 @@
 
     function renderPecas() {
         const box = document.getElementById('listaPecasBox');
-        if(pecasTmp.length === 0) { box.innerHTML = '<em style="color:#666;">Nenhuma peça lançada.</em>'; return; }
+        if(pecasTmp.length === 0) { box.innerHTML = '<em style="color:#666;">Nenhum item lançado.</em>'; return; }
         
         let html = '';
         pecasTmp.forEach((p, i) => {
@@ -1092,6 +1101,8 @@
                     usarReserva: p.usarReserva    // SALVA ESTADO DA CAIXINHA
                 });
             });
+        } else {
+            maoObraFinal += acrescimoRateio; // Fallback se tudo for 0
         }
 
         const numOSFormatado = db.proximaOS.toString().padStart(3, '0') + '/' + new Date().getFullYear().toString().slice(-2);
@@ -1100,7 +1111,7 @@
         if(placaLimpa.length === 7 && !placaLimpa.includes('-')) placaLimpa = placaLimpa.substring(0,3) + '-' + placaLimpa.substring(3);
 
         const osData = {
-            osNum: osSendoEditada || numOSFormatado, 
+            osNum: osSendoEditada || (db.proximaOS.toString().padStart(3, '0') + '/26'), 
             status: tipoDoc,
             fase: tipoDoc === 'OS' ? 'EM SERVIÇO' : 'ORÇAMENTO',
             timestamp: Date.now(), data: dataStr,
@@ -1112,9 +1123,8 @@
             mecanico: nomeMecanico, maoObraOriginal: maoObra, maoObraFinal: maoObraFinal, pecasFinal: arrPecasFinal,
             faturamento: faturamentoFinal, custoTotalPecas: totalCustoPecas, vendaTotalPecas: totalVendaPecas,
             condPag: taxaPerc > 0 ? `*PAGAMENTO VIA ${nomePagamento}` : '',
-            nomePagamento: nomePagamento,
-            itensResumo: pecasTmp.map(p => p.nome).join(', '),
-            taxaMaq: valorDescontadoMaquina, reserva: reservaAplicada, lucro: lucroReal, sincronizado: false 
+            taxaMaq: valorDescontadoMaquina, reserva: reservaAplicada, lucro: lucroReal, sincronizado: false,
+            itensResumo: pecasTmp.map(p => p.nome).join(', ')
         };
 
         if (osSendoEditada) {
@@ -1172,7 +1182,8 @@
         document.getElementById('docCor').innerText = os.cor;
         document.getElementById('docKm').innerText = os.km;
 
-        let html = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td><td class="text-right">${formatarBRL(os.maoObraFinal)}</td></tr>`;
+        let valorMaoObraDoc = os.maoObraFinal !== undefined ? os.maoObraFinal : os.maoObraOriginal;
+        let html = `<tr><td>MÃO DE OBRA - ${os.mecanico}</td><td class="text-center">1</td><td class="text-right">${formatarBRL(valorMaoObraDoc)}</td><td class="text-right">${formatarBRL(valorMaoObraDoc)}</td></tr>`;
         if(os.pecasFinal) {
             os.pecasFinal.forEach(p => { html += `<tr><td>${p.nome}</td><td class="text-center">${p.qtd}</td><td class="text-right">${formatarBRL(p.unit)}</td><td class="text-right">${formatarBRL(p.total)}</td></tr>`; });
         }
@@ -1198,8 +1209,9 @@
         msg += `-----------------------------------\n`;
         
         msg += `*DESCRIÇÃO DOS ITENS:*\n`;
-        if (osSelecionada.maoObraFinal > 0) {
-            msg += `- Mão de Obra: ${formatarBRL(osSelecionada.maoObraFinal)}\n`;
+        let valorMaoObraDoc = osSelecionada.maoObraFinal !== undefined ? osSelecionada.maoObraFinal : osSelecionada.maoObraOriginal;
+        if (valorMaoObraDoc > 0) {
+            msg += `- Mão de Obra: ${formatarBRL(valorMaoObraDoc)}\n`;
         }
         if (osSelecionada.pecasFinal && osSelecionada.pecasFinal.length > 0) {
             osSelecionada.pecasFinal.forEach(p => {
